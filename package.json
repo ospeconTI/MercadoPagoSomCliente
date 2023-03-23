@@ -1,0 +1,44 @@
+{
+    "name": "pagos-som",
+    "version": "1.1.0",
+    "description": "Pago de Ordenes Medicas",
+    "main": "./src/index.js",
+    "scripts": {
+        "watch": "webpack --watch",
+        "start": "webpack-dev-server --open --config webpack.dev.js",
+        "build": "webpack --config webpack.prod.js",
+        "test": "webpack  --config webpack.test.js",
+        "version-patch": "npm --no-git-tag-version version patch",
+        "version-minor": "npm --no-git-tag-version version minor",
+        "version-major": "npm --no-git-tag-version version major"
+    },
+    "author": "Bruno Monfrinotti",
+    "license": "MIT",
+    "dependencies": {
+        "@brunomon/helpers": "^3.0.0",
+        "@brunomon/nano-input": "^2.0.4",
+        "@brunomon/odata-fetch-factory": "^3.1.0",
+        "@brunomon/template-lit": "^1.7.1",
+        "@material-ui/icons": "^4.11.2",
+        "css-loader": "^3.4.1",
+        "file-loader": "^5.0.2",
+        "lit": "^2.0.2",
+        "redux": "^4.0.5",
+        "redux-logger": "^3.0.6",
+        "redux-thunk": "^2.3.0",
+        "style-loader": "^1.1.2",
+        "url-loader": "^3.0.0"
+    },
+    "devDependencies": {
+        "clean-webpack-plugin": "^4.0.0",
+        "html-webpack-plugin": "^5.5.0",
+        "terser-webpack-plugin": "^5.2.4",
+        "webpack": "^5.60.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-dev-server": "^4.3.1",
+        "webpack-merge": "^5.8.0",
+        "webpack-pwa-manifest": "^4.3.0",
+        "workbox-webpack-plugin": "^6.3.0",
+        "workbox-window": "^6.3.0"
+    }
+}

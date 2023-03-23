@@ -1,0 +1,26 @@
+/** @format */
+
+html {
+    --logo: url("../assets/icons/logo.png");
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    position: fixed;
+    font-family: "Nunito";
+    display: grid;
+    place-content: stretch;
+}

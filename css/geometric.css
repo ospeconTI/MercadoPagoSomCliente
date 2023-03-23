@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'geometric-semi';
+    font-style: normal;
+    font-weight: normal;
+    src: url('../assets/fonts/geometric-regular.woff2') format('woff2');
+}
+html{
+    font-family: 'geometric-semi';
+}
+    

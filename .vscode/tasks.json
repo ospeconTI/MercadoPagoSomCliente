@@ -1,0 +1,90 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "version-patch",
+            "problemMatcher": [],
+            "label": "version-patch",
+            "detail": "npm --no-git-tag-version version patch",
+            "group": "build"
+        },
+        {
+            "type": "npm",
+            "script": "version-minor",
+            "problemMatcher": [],
+            "label": "version-minor",
+            "detail": "npm --no-git-tag-version version minor",
+            "group": "build"
+        },
+        {
+            "type": "npm",
+            "script": "version-major",
+            "problemMatcher": [],
+            "label": "version-major",
+            "detail": "npm --no-git-tag-version version major",
+            "group": "build"
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "build",
+            "detail": "webpack --config webpack.prod.js"
+        },
+        {
+            "type": "npm",
+            "script": "test",
+            "group": "build",
+            "problemMatcher": [],
+            "label": "build-test",
+            "detail": "webpack --config webpack.test.js"
+        },
+        {
+            "label": "publish-test",
+            "type": "shell",
+            "command": "copy dist/* //uocradevnet/wwwroot/IntegracionOS"
+        },
+        {
+            "label": "Distribucion Patch",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "version-patch",
+                "build"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Distribucion Minor",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "version-minor",
+                "build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Distribucion Major",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "version-major",
+                "build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Distribucion Test",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "build-test",
+                "publish-test"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

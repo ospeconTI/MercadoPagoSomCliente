@@ -1,0 +1,27 @@
+/** @format */
+
+html {
+    --font-header-h1-family: inherit;
+    --font-header-h1-size: 1.2rem;
+    --font-header-h1-weight: 600;
+
+    --font-header-h1-menos-family: inherit;
+    --font-header-h1-menos-size: 0.9rem;
+    --font-header-h1-menos-weight: normal;
+
+    --font-header-h2-family: inherit;
+    --font-header-h2-size: 0.7rem;
+    --font-header-h2-weight: 600;
+
+    --font-bajada-family: inherit;
+    --font-bajada-size: 1rem;
+    --font-bajada-weight: normal;
+
+    --font-label-family: inherit;
+    --font-label-size: 0.8rem;
+    --font-label-weight: normal;
+
+    --font-error-family: inherit;
+    --font-error-size: 0.8rem;
+    --font-error-weight: normal;
+}
