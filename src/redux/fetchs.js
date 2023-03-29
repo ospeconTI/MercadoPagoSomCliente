@@ -19,3 +19,5 @@ export const loginFetch = fetchFactory(webApi, "LoginOS");
 export const logonFetch = ODataEntity(expedienteOdataFactory, "Logon");
 export const recuperoFetch = ODataEntity(expedienteOdataFactory, "PedirRecupero");
 export const cambiarPasswordFetch = ODataEntity(expedienteOdataFactory, "CambiarPassword");
+
+export const recibirPagoFetch = fetchFactory(webApiOrdenesMedicas, "MercadoPago/RecibirPago");
