@@ -3,7 +3,7 @@
 import { html, LitElement, css } from "lit";
 import { store } from "../../redux/store";
 import { connect, deepValue } from "@brunomon/helpers";
-import { PAGAR, PERSON, REFRESH } from "../../../assets/icons/svgs";
+import { PAGAR, PERSON, REFRESH, SEARCH } from "../../../assets/icons/svgs";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { input } from "@brunomon/template-lit/src/views/css/input";
 import { select } from "@brunomon/template-lit/src/views/css/select";
@@ -88,6 +88,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
             .detalle-grilla {
                 height: 30vh;
                 overflow-y: auto;
+                align-content: start;
             }
             .fila-grilla {
                 grid-template-columns: 3fr 1fr 1fr 1fr 1fr 1fr;
@@ -150,11 +151,15 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         return html`
             <div class="fit18 filtro">
                 <div class="input">
-                    <input id="1" />
-                    <label for="1">Apellido/DNI/Bono/CUIL Titular</label>
+                    <input id="filtro" />
+                    <label for="filtro">Apellido/DNI/Bono/CUIL Titular</label>
                     <label error></label>
                     <label subtext>Digite para filtrar la lista de bonos</label>
                 </div>
+                <button raised etiqueta round @click="${this.filtrar}">
+                    <div>${SEARCH}</div>
+                    <div class="justify-self-start">Filtrar</div>
+                </button>
 
                 <button raised etiqueta round @click="${this.refresh}">
                     <div>${REFRESH}</div>
@@ -247,7 +252,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
             </dialog>
             <dialog id="pago" class="resumen">
                 <div>${this.importeMP != 0 ? "Por favor, Escanee el QR" : "Pago Realizado Con éxito!"}</div>
-                <button raised etiqueta round @click="${this.cerrar}">
+                <button raised etiqueta round @click="${this.cerrarPago}">
                     <div class="justify-self-start">ACEPTAR</div>
                 </button>
             </dialog>
@@ -258,7 +263,28 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         const resumen = this.shadowRoot.querySelector("#resumen");
         resumen.close();
     }
+    cerrarPago() {
+        const resumen = this.shadowRoot.querySelector("#pago");
+        resumen.close();
+    }
 
+    filtrar() {
+        //this.item.filter();
+        const filtro = this.shadowRoot.querySelector("#filtro").value.toUpperCase();
+
+        this.items = store.getState().ordenMedica.entities.filter((item) => {
+            return (
+                item.numero.toString().toUpperCase().indexOf(filtro) != -1 ||
+                item.cuilTitular.toString().toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
+                item.paciente_Documento.toString().toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
+                item.paciente_Nombre.toUpperCase().indexOf(filtro) != -1
+            );
+        });
+        this.update();
+    }
+    // item.cuilTitular.toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
+    //     item.paciente_Nombre.toUpperCase().indexOf(filtro) != -1 ||
+    //     item.paciente_Documento.toString().toUpperCase().indexOf(filtro) != -1 ||
     sumar(e) {
         const total = this.shadowRoot.querySelector("#importe");
         const efectivo = this.shadowRoot.querySelector("#importeEfectivo");
@@ -325,7 +351,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         };
         this.body.ordenes = this.ordenes;
         const resumen = this.shadowRoot.querySelector("#resumen");
-
         resumen.showModal();
         this.update();
     }
@@ -335,6 +360,8 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
     }
 
     refresh() {
+        const filtro = this.shadowRoot.querySelector("#filtro");
+        filtro.value = "";
         store.dispatch(pendientesXCaja(6));
         this.update();
     }
