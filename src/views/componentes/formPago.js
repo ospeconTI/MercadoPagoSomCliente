@@ -3,7 +3,7 @@
 import { html, LitElement, css } from "lit";
 import { store } from "../../redux/store";
 import { connect, deepValue } from "@brunomon/helpers";
-import { PAGAR, PERSON, REFRESH, SEARCH } from "../../../assets/icons/svgs";
+import { PAGAR, PERSON, QR, REFRESH, SEARCH } from "../../../assets/icons/svgs";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { input } from "@brunomon/template-lit/src/views/css/input";
 import { select } from "@brunomon/template-lit/src/views/css/select";
@@ -19,7 +19,8 @@ import { recibirPago } from "../../redux/MercadoPago/actions";
 
 const PENDIENTES = "ordenMedica.timeStamp";
 const PAGO_RECIBIDO = "mercadoPago.pagoGeneradoTimeStamp";
-export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitElement) {
+const MESSAGE = "ui.mensajesTimeStamp";
+export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -31,6 +32,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         this.efectivo = 0;
         this.body = {};
         this.pagoGenerado = false;
+        this.messages = 0;
     }
 
     static get styles() {
@@ -49,6 +51,14 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
                 overflow-y: scroll;
                 align-content: start;
             }
+            :host([hidden]) {
+                display: none;
+            }
+
+            *[hidden] {
+                display: none !important;
+            }
+
             svg {
                 height: 2rem;
                 width: 2rem;
@@ -65,7 +75,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
                 align-items: center;
                 align-content: center;
             }
-
             .spinner-container {
                 position: relative;
                 color: var(--on-formulario);
@@ -97,6 +106,12 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
             .valores {
                 width: 20vw;
             }
+            .valores input {
+                font-size: 2rem;
+            }
+            .valores label {
+                font-size: 1.2rem;
+            }
             .resumen[open] {
                 display: grid;
                 justify-content: center;
@@ -116,7 +131,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
                 z-index: 100;
                 overflow: hidden;
             }
-
             .grilla-resumen {
                 background-color: white; //var(--on-formulario);
                 width: 90%;
@@ -139,10 +153,27 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
             .titulo-resumen {
                 grid-template-columns: 9fr 1fr;
                 justify-self: normal;
+                font-size: var(--font-header-h1-family);
             }
             .boton-cerrar {
                 cursor: pointer;
                 padding: 1rem;
+            }
+            .titulo-pago {
+                display: grid;
+                font-size: 2rem;
+                color: var(--primario);
+            }
+
+            .notificacion {
+                color: white;
+                background-color: red;
+                border-radius: 50%;
+                padding: 0.2rem;
+                font-size: 1rem;
+                position: absolute;
+                top: 8.6rem;
+                right: 5rem;
             }
         `;
     }
@@ -163,7 +194,11 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
 
                 <button raised etiqueta round @click="${this.refresh}">
                     <div>${REFRESH}</div>
-                    <div class="justify-self-start">PENDIENTES DE COBRO</div>
+
+                    <div class="justify-self-start">
+                        PENDIENTES DE COBRO
+                        <span class="notificacion" ?hidden="${this.messages == 0}">${this.messages}</span>
+                    </div>
                 </button>
             </div>
             <div class="grid grilla">
@@ -196,22 +231,22 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
             <div class="fit18 filtro">
                 <div class="grid column">
                     <div class="input valores" disabled>
-                        <input id="importeEfectivo" value="0" />
+                        <input id="importeEfectivo" .value="${this.efectivo}" />
                         <label for="importeEfectivo">Efectivo</label>
                         <label error></label>
                     </div>
 
                     <div class="input valores">
-                        <input id="importeMP" value="0" @blur=${this.mp} />
+                        <input id="importeMP" .value="${this.importeMP}" @blur=${this.mp} />
                         <label for="importeMP">Mercado Pago</label>
                         <label error></label>
                     </div>
                     <div class="input valores" disabled>
-                        <input id="importe" value="0" />
+                        <input id="importe" .value="${this.importeTotal}" />
                         <label for="importe">Total a Pagar</label>
                         <label error></label>
                     </div>
-                    <button raised etiqueta round @click="${this.prepararPago}">
+                    <button class="align-self-center" raised etiqueta round @click="${this.prepararPago}">
                         <div>${PAGAR}</div>
                         <div class="justify-self-start">Preparar Pago</div>
                     </button>
@@ -251,8 +286,9 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
                 </button>
             </dialog>
             <dialog id="pago" class="resumen">
-                <div>${this.importeMP != 0 ? "Por favor, Escanee el QR" : "Pago Realizado Con éxito!"}</div>
-                <button raised etiqueta round @click="${this.cerrarPago}">
+                <div class="titulo-pago">${this.importeMP != 0 ? "Por favor, Escanee el QR" : "Pago Realizado Con éxito!"}</div>
+                <div></div>
+                <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}">
                     <div class="justify-self-start">ACEPTAR</div>
                 </button>
             </dialog>
@@ -282,24 +318,16 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         });
         this.update();
     }
-    // item.cuilTitular.toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
-    //     item.paciente_Nombre.toUpperCase().indexOf(filtro) != -1 ||
-    //     item.paciente_Documento.toString().toUpperCase().indexOf(filtro) != -1 ||
+
     sumar(e) {
-        const total = this.shadowRoot.querySelector("#importe");
-        const efectivo = this.shadowRoot.querySelector("#importeEfectivo");
-        const importeMP = this.shadowRoot.querySelector("#importeMP");
         if (e.currentTarget.checked) {
-            total.value = parseFloat(total.value) + e.currentTarget.item.importeCaja;
-            efectivo.value = parseFloat(total.value) - parseFloat(importeMP.value);
+            this.importeTotal = parseFloat(this.importeTotal) + e.currentTarget.item.importeCaja;
+            this.efectivo = parseFloat(this.importeTotal) - parseFloat(this.importeMP);
         } else {
-            total.value = parseFloat(total.value) - e.currentTarget.item.importeCaja;
-            efectivo.value = total.value;
-            importeMP.value = 0;
+            this.importeTotal = parseFloat(this.importeTotal) - e.currentTarget.item.importeCaja;
+            this.efectivo = this.importeTotal;
+            this.importeMP = 0;
         }
-        this.importeTotal = parseFloat(total.value);
-        this.importeMP = parseFloat(importeMP.value);
-        this.efectivo = parseFloat(efectivo.value);
         this.update();
     }
 
@@ -346,7 +374,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         this.body = {
             mercadoPago: this.importeMP,
             efectivo: this.efectivo,
-            caja: "CAJATEST",
+            caja: localStorage.getItem("caja"),
             storeId: "P0002",
         };
         this.body.ordenes = this.ordenes;
@@ -359,22 +387,32 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
         store.dispatch(recibirPago(this.body));
     }
 
+    blanqueo() {
+        this.importeMP = 0;
+        this.importeTotal = 0;
+        this.efectivo = 0;
+        this.update();
+    }
+
     refresh() {
         const filtro = this.shadowRoot.querySelector("#filtro");
         filtro.value = "";
-        store.dispatch(pendientesXCaja(6));
+        store.dispatch(pendientesXCaja(localStorage.getItem("caja")));
+        this.blanqueo();
         this.update();
     }
 
     enlace(field) {
         return (e) => this.updateProperty(e, field);
     }
+
     updateProperty(e, field) {
         this.item[field] = e.currentTarget.value;
         this.requestUpdate();
     }
 
     stateChanged(state, name) {
+        this.hidden = false;
         if (name == PENDIENTES) {
             this.items = state.ordenMedica.entities;
             this.update();
@@ -386,7 +424,14 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO)(LitEleme
                 const resumen = this.shadowRoot.querySelector("#resumen");
                 resumen.close();
                 dialogoPago.showModal();
+                this.blanqueo();
+                this.refresh();
             }
+            this.update();
+        }
+
+        if (name == MESSAGE) {
+            this.messages = state.ui.mensajes;
             this.update();
         }
     }

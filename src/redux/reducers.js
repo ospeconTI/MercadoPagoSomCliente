@@ -7,6 +7,8 @@ import { reducer as apiReducer } from "./api/reducer";
 import { reducer as autorizacionReducer } from "./autorizacion/reducer";
 import { reducer as ordenMedica } from "./OrdenMedica/reducer";
 import { reducer as mercadoPagoReducer } from "./MercadoPago/reducer";
+import { reducer as cajaReducer } from "./caja/reducer";
+import { reducer as notifiationsReducer } from "./notifications/reducer";
 
 export const rootReducer = (state = {}, action) => {
     const presentacionesEstadosRed = state.presentacionesEstados;
@@ -17,5 +19,7 @@ export const rootReducer = (state = {}, action) => {
         routing: routingReducer(state.routing, action),
         ordenMedica: ordenMedica(state.ordenMedica, action),
         mercadoPago: mercadoPagoReducer(state.mercadoPago, action),
+        caja: cajaReducer(state.caja, action),
+        notifiations: notifiationsReducer(state.notifiations, action),
     };
 };

@@ -14,6 +14,7 @@ import { viewManager } from "./views/manager";
 import { login } from "./redux/autorizacion/actions";
 import { register as registerSW, activate as activateSW } from "./libs/serviceWorker";
 import { pendientesXCaja } from "./redux/OrdenMedica/actions";
+import { connect } from "./redux/notifications/actions";
 
 if (process.env.NODE_ENV === "production") {
     registerSW();
@@ -23,9 +24,14 @@ if (process.env.NODE_ENV === "production") {
 viewMode("main");
 store.dispatch(captureMedia());
 store.dispatch(goTo("main"));
-store.dispatch(pendientesXCaja(6));
 
-console.log("Sirviendo datos de :" + SERVICE_URL);
+if (localStorage.getItem("caja") != undefined) {
+    store.dispatch(pendientesXCaja(localStorage.getItem("caja")));
+    store.dispatch(connect(localStorage.getItem("caja")));
+} else {
+    dispatch(noticarCajaVacia());
+}
+
 /* if ("credentials" in navigator) {
     navigator.credentials
         .get({ password: true, mediation: "optional" })

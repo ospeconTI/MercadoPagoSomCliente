@@ -18,6 +18,8 @@ export const STEP = "[ui] step";
 
 export const SHOW_ALERT = "[ui] show alert";
 export const SHOW_CONFIRM = "[ui] show confirm";
+export const SUMAR_MENSAJE = "[ui] sumar mensaje";
+export const BLANQUEAR_MENSAJE = "[ui] blanquear mensaje";
 
 export const showSpinner = () => ({
     type: SHOW_SPINNER,
@@ -67,4 +69,12 @@ export const selection = (option) => ({
 export const setStep = (step) => ({
     type: STEP,
     step: step,
+});
+
+export const sumarMensaje = () => ({
+    type: SUMAR_MENSAJE,
+});
+
+export const blanquearMensaje = () => ({
+    type: BLANQUEAR_MENSAJE,
 });

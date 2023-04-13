@@ -9,17 +9,23 @@ import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { logo } from "@brunomon/template-lit/src/views/css/logo";
 import { select } from "@brunomon/template-lit/src/views/css/select";
 import { button } from "@brunomon/template-lit/src/views/css/button";
-import { MENU, RIGHT, PERSON, SETTINGS } from "../../../assets/icons/svgs";
+import { input } from "@brunomon/template-lit/src/views/css/input";
+import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK } from "../../../assets/icons/svgs";
 import { logout } from "../../redux/autorizacion/actions";
 import { gesturesController } from "@brunomon/template-lit/src/views/controllers/gesturesController";
 import { selection } from "../../redux/ui/actions";
+
+import { get, set } from "../../redux/caja/actions";
+import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
 
 const MEDIA_CHANGE = "ui.media.timeStamp";
 const SELECTION = "ui.menu.timeStamp";
 const SCREEN = "screen.timeStamp";
 const USUARIO = "autorizacion.loginTimeStamp";
-
-export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO, SELECTION)(LitElement) {
+const SETCAJA = "caja.setTimeStamp";
+const GETCAJA = "caja.getTimeStamp";
+const CAJAVACIA = "caja.cajaVaciaTimeStamp";
+export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO, SELECTION, SETCAJA, GETCAJA, CAJAVACIA)(LitElement) {
     constructor() {
         super();
         this.area = "header";
@@ -30,6 +36,8 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
         this.defaultOption = 0;
         this.selectedOption = new Array(this.optionsCount).fill(false);
         this.selectedOption[this.defaultOption] = true;
+        this.caja = "";
+        this.formularioCajaVisible = false;
 
         const gestures = new gesturesController(this, this.gestos);
     }
@@ -40,6 +48,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
             ${select}
             ${logo}
             ${button}
+            ${input}
             :host {
                 display: grid;
                 grid-auto-flow: column;
@@ -48,6 +57,10 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
             }
             :host([hidden]) {
                 display: none;
+            }
+
+            *[hidden] {
+                display: none !important;
             }
 
             #titulo {
@@ -159,6 +172,14 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                 height: 2rem;
                 width: 2rem;
             }
+            .caja {
+                display: grid;
+                position: absolute;
+                top: 12vh;
+                right: 4vw;
+                padding: 1rem;
+                background-color: var(--formulario);
+            }
         `;
     }
     render() {
@@ -180,7 +201,19 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                     <div>${PERSON}</div>
                     <div class="justify-self-start">Login</div>
                 </button>
-                <button link ?selected="${this.selectedOption[0]}" @click=${this.click} .option=${"opcion0"}>${SETTINGS}</button>
+                <button link ?selected="${this.selectedOption[0]}" @click="${this.mostrarCaja}" .option=${"opcion0"}>${SETTINGS}</button>
+            </div>
+
+            <div id="cajaDiv" class="caja" ?hidden=${!this.formularioCajaVisible}>
+                <div class="input">
+                    <input id="caja" .value="${this.caja}" />
+                    <label for="caja">Código de Caja</label>
+                </div>
+
+                <button raised etiqueta round id="gabarCaja" @click=${this.guardarCaja}>
+                    ${OK}
+                    <div class="justify-self-start">Guardar</div>
+                </button>
             </div>
         `;
     }
@@ -226,6 +259,19 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
         store.dispatch(goTo(e.currentTarget.option));
     }
 
+    mostrarCaja(e) {
+        this.formularioCajaVisible = !this.formularioCajaVisible;
+        this.caja = localStorage.getItem("caja");
+        this.update();
+    }
+
+    guardarCaja(e) {
+        const caja = this.shadowRoot.querySelector("#caja").value;
+        localStorage.setItem("caja", caja);
+        store.dispatch(pendientesXCaja());
+        this.formularioCajaVisible = false;
+    }
+
     firstUpdated(changedProperties) {
         this.opciones = this.shadowRoot.querySelector("#opciones");
     }
@@ -243,6 +289,9 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
             if (state.autorizacion.usuario.Profiles && state.autorizacion.usuario.Profiles.length != 0) {
                 this.usuario = state.autorizacion.usuario;
             }
+        }
+        if (name == CAJAVACIA) {
+            this.formularioCajaVisible = true;
         }
     }
 
@@ -274,6 +323,11 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
             },
             selectedOption: {
                 type: Array,
+            },
+            formularioCajaVisible: {
+                type: Boolean,
+                reflect: true,
+                attribute: "caja-vacia",
             },
         };
     }
