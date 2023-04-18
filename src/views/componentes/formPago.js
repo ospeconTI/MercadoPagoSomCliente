@@ -3,7 +3,7 @@
 import { html, LitElement, css } from "lit";
 import { store } from "../../redux/store";
 import { connect, deepValue } from "@brunomon/helpers";
-import { PAGAR, PERSON, QR, REFRESH, SEARCH } from "../../../assets/icons/svgs";
+import { OK, PAGAR, PERSON, QR, REFRESH, SEARCH } from "../../../assets/icons/svgs";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { input } from "@brunomon/template-lit/src/views/css/input";
 import { select } from "@brunomon/template-lit/src/views/css/select";
@@ -18,9 +18,10 @@ import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
 import { recibirPago } from "../../redux/MercadoPago/actions";
 
 const PENDIENTES = "ordenMedica.timeStamp";
-const PAGO_RECIBIDO = "mercadoPago.pagoGeneradoTimeStamp";
+const PAGO_GENERADO = "mercadoPago.pagoGeneradoTimeStamp";
 const MESSAGE = "ui.mensajesTimeStamp";
-export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)(LitElement) {
+const PAGO_RECIBIDO = "ui.pagoRecibidoTimeStamp";
+export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE, PAGO_RECIBIDO)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -33,6 +34,8 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
         this.body = {};
         this.pagoGenerado = false;
         this.messages = 0;
+        this.pagoOK = false;
+        this.escondido = true;
     }
 
     static get styles() {
@@ -166,14 +169,32 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
             }
 
             .notificacion {
+                display: grid;
                 color: white;
                 background-color: red;
                 border-radius: 50%;
                 padding: 0.2rem;
                 font-size: 1rem;
                 position: absolute;
-                top: 8.6rem;
-                right: 5rem;
+                top: -0.5rem;
+                right: 2rem;
+                height: 1rem;
+                width: 1rem;
+                place-content: center;
+            }
+            .ok {
+                display: grid;
+                height: 7rem;
+                width: 7rem;
+                background-color: green;
+                border-radius: 50%;
+                align-items: center;
+                justify-items: center;
+            }
+            .ok svg {
+                fill: white;
+                width: 4rem;
+                height: 4rem;
             }
         `;
     }
@@ -192,7 +213,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
                     <div class="justify-self-start">Filtrar</div>
                 </button>
 
-                <button raised etiqueta round @click="${this.refresh}">
+                <button raised etiqueta round style="position:relative" @click="${this.refresh}">
                     <div>${REFRESH}</div>
 
                     <div class="justify-self-start">
@@ -287,10 +308,16 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
             </dialog>
             <dialog id="pago" class="resumen">
                 <div class="titulo-pago">${this.importeMP != 0 ? "Por favor, Escanee el QR" : "Pago Realizado Con éxito!"}</div>
-                <div></div>
-                <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}">
-                    <div class="justify-self-start">ACEPTAR</div>
-                </button>
+                <div ?hidden="${this.escondido}" class="ok" id="ok">${OK}</div>
+                <div class="titulo-pago" ?hidden="${this.escondido}">El pago ha sido realizado</div>
+                <div class="grid column">
+                    <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}" ?hidden=${this.escondido}>
+                        <div class="justify-self-start">ACEPTAR</div>
+                    </button>
+                    <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}" ?hidden=${!this.escondido}>
+                        <div class="justify-self-start">CANCELAR</div>
+                    </button>
+                </div>
             </dialog>
         `;
     }
@@ -301,6 +328,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
     }
     cerrarPago() {
         const resumen = this.shadowRoot.querySelector("#pago");
+        this.blanqueo();
         resumen.close();
     }
 
@@ -332,25 +360,21 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
     }
 
     mp() {
-        const total = this.shadowRoot.querySelector("#importe");
+        const importeTotal = this.shadowRoot.querySelector("#importe");
         const efectivo = this.shadowRoot.querySelector("#importeEfectivo");
         const importeMP = this.shadowRoot.querySelector("#importeMP");
-        if (importeMP.value < 0 || parseFloat(importeMP.value) > parseFloat(total.value)) {
+        if (importeMP.value < 0 || parseFloat(importeMP.value) > parseFloat(importeTotal.value)) {
             alert("El valor ingresado en Mercado Pago es incorrecto");
-            importeMP.value = 0;
+            this.importeMP = 0;
             return false;
         }
-        efectivo.value = parseFloat(total.value) - parseFloat(importeMP.value);
-        this.efectivo = parseFloat(efectivo.value);
+        this.efectivo = parseFloat(importeTotal.value) - parseFloat(importeMP.value);
         this.importeMP = parseFloat(importeMP.value);
         this.update();
     }
 
     prepararPago(e) {
-        const total = this.shadowRoot.querySelector("#importe");
-        const efectivo = this.shadowRoot.querySelector("#importeEfectivo").value;
-        const importeMP = this.shadowRoot.querySelector("#importeMP").value;
-        if (parseFloat(efectivo) == 0 && parseFloat(importeMP) == 0) {
+        if (parseFloat(this.efectivo) == 0 && parseFloat(this.importeMP) == 0) {
             alert("Debe seleccionar los bonos a pagar");
             return false;
         }
@@ -388,17 +412,24 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
     }
 
     blanqueo() {
-        this.importeMP = 0;
+        /*     this.importeMP = 0;
         this.importeTotal = 0;
         this.efectivo = 0;
-        this.update();
+        this.update(); */
+        this.refresh();
     }
 
     refresh() {
+        const checks = this.shadowRoot.querySelectorAll("#c1");
+        checks.forEach((check) => {
+            check.checked = false;
+        });
         const filtro = this.shadowRoot.querySelector("#filtro");
         filtro.value = "";
         store.dispatch(pendientesXCaja(localStorage.getItem("caja")));
-        this.blanqueo();
+        this.importeMP = 0;
+        this.importeTotal = 0;
+        this.efectivo = 0;
         this.update();
     }
 
@@ -415,23 +446,36 @@ export class formPago extends connect(store, PENDIENTES, PAGO_RECIBIDO, MESSAGE)
         this.hidden = false;
         if (name == PENDIENTES) {
             this.items = state.ordenMedica.entities;
+            this.escondido = true;
             this.update();
         }
-        if (name == PAGO_RECIBIDO) {
+
+        if (name == PAGO_GENERADO) {
             this.pagoGenerado = state.mercadoPago.pagoGenerado;
             if (this.pagoGenerado) {
                 const dialogoPago = this.shadowRoot.querySelector("#pago");
                 const resumen = this.shadowRoot.querySelector("#resumen");
                 resumen.close();
+                if (this.importeMP == 0) {
+                    this.escondido = false;
+                } else {
+                    if (this.pagoOK) {
+                        this.escondido = false;
+                    }
+                }
                 dialogoPago.showModal();
-                this.blanqueo();
-                this.refresh();
             }
             this.update();
         }
 
         if (name == MESSAGE) {
             this.messages = state.ui.mensajes;
+            this.update();
+        }
+
+        if (name == PAGO_RECIBIDO) {
+            this.pagoOK = true;
+            this.escondido = false;
             this.update();
         }
     }

@@ -10,7 +10,7 @@ import { logo } from "@brunomon/template-lit/src/views/css/logo";
 import { select } from "@brunomon/template-lit/src/views/css/select";
 import { button } from "@brunomon/template-lit/src/views/css/button";
 import { input } from "@brunomon/template-lit/src/views/css/input";
-import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK } from "../../../assets/icons/svgs";
+import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK, ANULACION, PAGAR } from "../../../assets/icons/svgs";
 import { logout } from "../../redux/autorizacion/actions";
 import { gesturesController } from "@brunomon/template-lit/src/views/controllers/gesturesController";
 import { selection } from "../../redux/ui/actions";
@@ -179,6 +179,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                 right: 4vw;
                 padding: 1rem;
                 background-color: var(--formulario);
+                z-index: 1000;
             }
         `;
     }
@@ -197,6 +198,15 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
 
             <div id="opciones" class="grid column" @click=${this.toggleMenu}>
                 <button raised circle action class="menu-button">${RIGHT}</button>
+                <button link etiqueta ?selected="${this.selectedOption[1]}" @click=${this.click} .option=${"formPago"}>
+                    <div>${PAGAR}</div>
+                    <div class="justify-self-start">Caja</div>
+                </button>
+
+                <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"opcion2"}>
+                    <div>${ANULACION}</div>
+                    <div class="justify-self-start">Anulación</div>
+                </button>
                 <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>
                     <div>${PERSON}</div>
                     <div class="justify-self-start">Login</div>

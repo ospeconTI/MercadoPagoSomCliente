@@ -8,37 +8,7 @@ export const screenLayuts = {
         medium: HEADER_BODY,
         large: HEADER_BODY,
     },
-    bonos: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    consultarFacturas: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    aprobacionFacturas: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    detalleFactura: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    detalleFacturaC: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    generarBonos: {
-        small: HEADER_BODY,
-        medium: HEADER_BODY,
-        large: HEADER_BODY,
-    },
-    presentacionesCabecera: {
+    formPago: {
         small: HEADER_BODY,
         medium: HEADER_BODY,
         large: HEADER_BODY,

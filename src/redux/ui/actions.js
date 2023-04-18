@@ -20,6 +20,7 @@ export const SHOW_ALERT = "[ui] show alert";
 export const SHOW_CONFIRM = "[ui] show confirm";
 export const SUMAR_MENSAJE = "[ui] sumar mensaje";
 export const BLANQUEAR_MENSAJE = "[ui] blanquear mensaje";
+export const RECIBIR_PAGO_MP = "[ui] recibir pago MP";
 
 export const showSpinner = () => ({
     type: SHOW_SPINNER,
@@ -77,4 +78,8 @@ export const sumarMensaje = () => ({
 
 export const blanquearMensaje = () => ({
     type: BLANQUEAR_MENSAJE,
+});
+
+export const recibirPagoMP = () => ({
+    type: RECIBIR_PAGO_MP,
 });
