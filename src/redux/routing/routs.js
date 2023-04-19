@@ -1,2 +1,2 @@
 /** @format */
-export const largeRoute = ["1-main", "3-formPago"];
+export const largeRoute = ["1-main", "3-formPago", "4-anulacion"];

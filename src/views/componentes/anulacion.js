@@ -16,12 +16,16 @@ import { showAlert, showConfirm } from "../../redux/ui/actions";
 import { showSpinner } from "../../redux/api/actions";
 import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
 import { recibirPago } from "../../redux/MercadoPago/actions";
+import { isInLayout } from "../../redux/screens/screenLayouts";
 
 const PENDIENTES = "ordenMedica.timeStamp";
 const PAGO_GENERADO = "mercadoPago.pagoGeneradoTimeStamp";
-const MESSAGE = "ui.mensajesTimeStamp";
+
 const PAGO_RECIBIDO = "ui.pagoRecibidoTimeStamp";
-export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE, PAGO_RECIBIDO)(LitElement) {
+const MEDIA_CHANGE = "ui.media.timeStamp";
+
+const SCREEN = "screen.timeStamp";
+export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, PAGO_GENERADO, PAGO_RECIBIDO)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -115,14 +119,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
             .valores label {
                 font-size: 1.2rem;
             }
-
-            .valores select {
-                font-size: 2rem;
-            }
-            .valores option {
-                font-size: 1.5rem;
-            }
-
             .resumen[open] {
                 display: grid;
                 justify-content: center;
@@ -130,7 +126,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
                 justify-items: center;
                 background-color: white;
                 width: 50%;
-                height: 75%;
+                height: 70%;
                 border-radius: 1.5rem;
                 border: none;
                 padding: 0.5rem;
@@ -145,7 +141,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
             .grilla-resumen {
                 background-color: white; //var(--on-formulario);
                 width: 90%;
-                font-size: 1.3rem;
             }
             .cabecera-grilla-resumen {
                 grid-template-columns: 1fr auto;
@@ -158,10 +153,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
                 overflow-y: auto;
                 align-content: start;
             }
-            .total {
-                font-size: 1.5rem;
-                color: var(--primario);
-            }
             .fila-grilla-resumen {
                 grid-template-columns: 1fr auto;
                 color: var(--formulario);
@@ -169,8 +160,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
             .titulo-resumen {
                 grid-template-columns: 9fr 1fr;
                 justify-self: normal;
-                font-size: 2rem;
-                color: var(--primario);
+                font-size: var(--font-header-h1-family);
             }
             .boton-cerrar {
                 cursor: pointer;
@@ -218,22 +208,13 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
             <div class="fit18 filtro">
                 <div class="input">
                     <input id="filtro" />
-                    <label for="filtro">Apellido/DNI/Bono/CUIL Titular</label>
+                    <label for="filtro">Bono</label>
                     <label error></label>
-                    <label subtext>Digite para filtrar la lista de bonos</label>
+                    <label subtext></label>
                 </div>
                 <button raised etiqueta round @click="${this.filtrar}">
                     <div>${SEARCH}</div>
                     <div class="justify-self-start">Filtrar</div>
-                </button>
-
-                <button raised etiqueta round style="position:relative" @click="${this.refresh}">
-                    <div>${REFRESH}</div>
-
-                    <div class="justify-self-start">
-                        PENDIENTES DE COBRO
-                        <span class="notificacion" ?hidden="${this.messages == 0}">${this.messages}</span>
-                    </div>
                 </button>
             </div>
             <div class="grid grilla">
@@ -265,14 +246,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
             </div>
             <div class="fit18 filtro">
                 <div class="grid column">
-                    <div class="valores select">
-                        <label>Medio de Pago</label>
-                        <select id="valores" @change="${this.medioPago}">
-                            <option class="valores" value="E">Efectivo</option>
-                            <option class="valores" value="B">Billetera Virtual</option>
-                        </select>
-                    </div>
-                    <!--           <div class="input valores" disabled>
+                    <div class="input valores" disabled>
                         <input id="importeEfectivo" .value="${this.efectivo}" />
                         <label for="importeEfectivo">Efectivo</label>
                         <label error></label>
@@ -280,9 +254,9 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
 
                     <div class="input valores">
                         <input id="importeMP" .value="${this.importeMP}" @blur=${this.mp} />
-                        <label for="importeMP">Billetera Virtual</label>
+                        <label for="importeMP">Mercado Pago</label>
                         <label error></label>
-                    </div> -->
+                    </div>
                     <div class="input valores" disabled>
                         <input id="importe" .value="${this.importeTotal}" />
                         <label for="importe">Total a Pagar</label>
@@ -315,11 +289,11 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
                         })}
                     </div>
                 </div>
-                <div class="grid row total">
+                <div class="grid row">
                     <div class="grid column">
-                        <div ?hidden="${this.importeMP == 0}">A pagar en Efectivo:</div>
-                        <div ?hidden="${this.efectivo == 0}">A pagar con Billetera Virtual:</div>
-                        <div>$${this.importeTotal}</div>
+                        <div>Total Efectivo: $${this.efectivo}</div>
+                        <div>Total MP: $${this.importeMP}</div>
+                        <div>Total: $${this.importeTotal}</div>
                     </div>
                 </div>
                 <button raised etiqueta round @click="${this.pagar}">
@@ -351,16 +325,6 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
         const resumen = this.shadowRoot.querySelector("#pago");
         this.blanqueo();
         resumen.close();
-    }
-
-    medioPago(e) {
-        if (e.currentTarget.value == "E") {
-            this.efectivo = this.importeTotal;
-            this.importeMP = 0;
-        } else {
-            this.efectivo = 0;
-            this.importeMP = this.importeTotal;
-        }
     }
 
     filtrar() {
@@ -395,7 +359,7 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
         const efectivo = this.shadowRoot.querySelector("#importeEfectivo");
         const importeMP = this.shadowRoot.querySelector("#importeMP");
         if (importeMP.value < 0 || parseFloat(importeMP.value) > parseFloat(importeTotal.value)) {
-            alert("El valor ingresado en la billetera virtual es incorrecto");
+            alert("El valor ingresado en Mercado Pago es incorrecto");
             this.importeMP = 0;
             return false;
         }
@@ -474,39 +438,17 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
     }
 
     stateChanged(state, name) {
-        this.hidden = false;
-        if (name == PENDIENTES) {
-            this.items = state.ordenMedica.entities;
-            this.escondido = true;
-            this.update();
-        }
-
-        if (name == PAGO_GENERADO) {
-            this.pagoGenerado = state.mercadoPago.pagoGenerado;
-            if (this.pagoGenerado) {
-                const dialogoPago = this.shadowRoot.querySelector("#pago");
-                const resumen = this.shadowRoot.querySelector("#resumen");
-                resumen.close();
-                if (this.importeMP == 0) {
-                    this.escondido = false;
-                } else {
-                    if (this.pagoOK) {
-                        this.escondido = false;
-                    }
-                }
-                dialogoPago.showModal();
+        if (name == SCREEN || name == MEDIA_CHANGE) {
+            this.mediaSize = state.ui.media.size;
+            this.hidden = true;
+            const isCurrentScreen = ["anulacion"].includes(state.screen.name);
+            if (isInLayout(state, this.area) && !isCurrentScreen) {
+                //activo evento de gestos
+                this.opciones = this.shadowRoot.querySelector("#opciones");
+                gestures(this.opciones, this.gestos, this);
+                this.hidden = false;
             }
-            this.update();
-        }
 
-        if (name == MESSAGE) {
-            this.messages = state.ui.mensajes;
-            this.update();
-        }
-
-        if (name == PAGO_RECIBIDO) {
-            this.pagoOK = true;
-            this.escondido = false;
             this.update();
         }
     }
@@ -529,4 +471,4 @@ export class formPago extends connect(store, PENDIENTES, PAGO_GENERADO, MESSAGE,
         };
     }
 }
-window.customElements.define("form-pago", formPago);
+window.customElements.define("anulacion-component", anulacion);

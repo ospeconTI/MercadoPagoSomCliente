@@ -203,7 +203,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                     <div class="justify-self-start">Caja</div>
                 </button>
 
-                <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"opcion2"}>
+                <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"anulacion"}>
                     <div>${ANULACION}</div>
                     <div class="justify-self-start">Anulación</div>
                 </button>
