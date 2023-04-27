@@ -1,6 +1,6 @@
 /** @format */
 
-import { PENDIENTES_X_CAJA_SUCCESS, PENDIENTES_X_CAJA_ERROR, PAGADOS_X_EXPEDIENTE_SUCCESS, PAGADOS_X_NUMERO_SUCCESS, PAGADOS_X_EXPEDIENTE_ERROR } from "./actions";
+import { PENDIENTES_X_CAJA_SUCCESS, PENDIENTES_X_CAJA_ERROR, PAGADOS_X_EXPEDIENTE_SUCCESS, PAGADOS_X_NUMERO_SUCCESS, PAGADOS_X_EXPEDIENTE_ERROR, PAGADOS_X_NUMERO_ERROR } from "./actions";
 import { store } from "../store";
 
 const initialState = {
@@ -28,7 +28,8 @@ export const reducer = (state = initialState, action) => {
             newState.anular = action.payload.receive;
             newState.anularTimeStamp = new Date().getTime();
             break;
-        case PAGADOS_X_EXPEDIENTE_ERROR || PAGADOS_X_EXPEDIENTE_ERROR:
+        case PAGADOS_X_EXPEDIENTE_ERROR:
+        case PAGADOS_X_NUMERO_ERROR:
             newState.errorTimeStamp = new Date().getTime();
             break;
     }

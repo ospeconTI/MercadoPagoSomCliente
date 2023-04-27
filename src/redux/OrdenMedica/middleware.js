@@ -39,7 +39,7 @@ export const pagadosXnumero =
         next(action);
         if (action.type === PAGADOS_X_NUMERO) {
             if (localStorage.getItem("caja") != undefined) {
-                dispatch(RESTRequest(ordenxNumeroFetch, action.numero + "/" + localStorage.getItem("caja"), PAGADOS_X_NUMERO_SUCCESS, PENDIENTES_X_CAJA_ERROR));
+                dispatch(RESTRequest(ordenxNumeroFetch, action.numero + "/" + localStorage.getItem("caja"), PAGADOS_X_NUMERO_SUCCESS, PAGADOS_X_NUMERO_ERROR));
                 dispatch(blanquearMensaje());
             } else {
                 dispatch(noticarCajaVacia());

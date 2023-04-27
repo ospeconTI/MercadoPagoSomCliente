@@ -128,6 +128,12 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                 font-size: 1.5rem;
             }
 
+            .valores input {
+                color: var(--primario) !important;
+                border: 1px solid var(--primario) !important;
+                text-align: end !important;
+            }
+
             .resumen[open] {
                 display: grid;
                 justify-content: center;
@@ -229,7 +235,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                 </div>
                 <button raised etiqueta round @click="${this.filtrar}">
                     <div>${SEARCH}</div>
-                    <div class="justify-self-start">Filtrar</div>
+                    <div class="justify-self-start">FILTRAR</div>
                 </button>
 
                 <button raised etiqueta round style="position:relative" @click="${this.refresh}">
@@ -283,17 +289,6 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                             <option class="valores" value="B">Billetera Virtual</option>
                         </select>
                     </div>
-                    <!--           <div class="input valores" disabled>
-                        <input id="importeEfectivo" .value="${this.efectivo}" />
-                        <label for="importeEfectivo">Efectivo</label>
-                        <label error></label>
-                    </div>
-
-                    <div class="input valores">
-                        <input id="importeMP" .value="${this.importeMP}" @blur=${this.mp} />
-                        <label for="importeMP">Billetera Virtual</label>
-                        <label error></label>
-                    </div> -->
                     <div class="input valores" disabled>
                         <input id="importe" .value="${this.importeTotal}" />
                         <label for="importe">Total a Pagar</label>
@@ -301,7 +296,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                     </div>
                     <button class="align-self-center" raised etiqueta round @click="${this.prepararPago}">
                         <div>${PAGAR}</div>
-                        <div class="justify-self-start">Preparar Pago</div>
+                        <div class="justify-self-start">PREPARAR PAGO</div>
                     </button>
                 </div>
             </div>

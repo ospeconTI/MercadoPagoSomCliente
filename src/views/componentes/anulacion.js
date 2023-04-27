@@ -376,7 +376,7 @@ export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, ORDENES, MOT
 
     buscar() {
         const filtro = this.shadowRoot.querySelector("#filtro").value.toUpperCase();
-        const filtroX = this.shadowRoot.querySelector("#filtroX");
+        const filtroX = this.shadowRoot.querySelector("#filtroX").value;
         if (filtroX == "B") {
             store.dispatch(pagadosXNumero(filtro));
         } else {
