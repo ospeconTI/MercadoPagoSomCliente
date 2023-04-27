@@ -14,6 +14,8 @@ import {
     BLANQUEAR_MENSAJE,
     SUMAR_MENSAJE,
     RECIBIR_PAGO_MP,
+    RECIBIR_DEVOLUCION_MP,
+    RECIBIR_DEVOLUCION_EF,
 } from "./actions";
 
 const initialState = {
@@ -53,6 +55,8 @@ const initialState = {
     mensajes: null,
     mensajesTimeStamp: null,
     pagoRecibidoTimeStamp: null,
+    devolucionRecibidaTimeStamp: null,
+    devolucionEfRecibidaTimeStamp: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -112,6 +116,12 @@ export const reducer = (state = initialState, action) => {
             break;
         case RECIBIR_PAGO_MP:
             newState.pagoRecibidoTimeStamp = new Date().getTime();
+            break;
+        case RECIBIR_DEVOLUCION_MP:
+            newState.devolucionRecibidaTimeStamp = new Date().getTime();
+            break;
+        case RECIBIR_DEVOLUCION_EF:
+            newState.devolucionEfRecibidaTimeStamp = new Date().getTime();
             break;
     }
     return newState;

@@ -3,7 +3,7 @@
 import { html, LitElement, css } from "lit";
 import { store } from "../../redux/store";
 import { connect, deepValue } from "@brunomon/helpers";
-import { OK, PAGAR, PERSON, QR, REFRESH, SEARCH } from "../../../assets/icons/svgs";
+import { ANULAR, CANCEL, OK, PAGAR, PERSON, QR, REFRESH, SEARCH, WAIT } from "../../../assets/icons/svgs";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { input } from "@brunomon/template-lit/src/views/css/input";
 import { select } from "@brunomon/template-lit/src/views/css/select";
@@ -14,21 +14,23 @@ import { AlertControl } from "./alert";
 import { ConfirmControl } from "./confirm";
 import { showAlert, showConfirm } from "../../redux/ui/actions";
 import { showSpinner } from "../../redux/api/actions";
-import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
-import { recibirPago } from "../../redux/MercadoPago/actions";
+import { pagadosXExpediente, pagadosXNumero } from "../../redux/OrdenMedica/actions";
+import { devolverPago, recibirPago } from "../../redux/MercadoPago/actions";
 import { isInLayout } from "../../redux/screens/screenLayouts";
+import { traer } from "../../redux/motivosAnulacion/actions";
+import { ThreeSixtyOutlined } from "@material-ui/icons";
 
-const PENDIENTES = "ordenMedica.timeStamp";
-const PAGO_GENERADO = "mercadoPago.pagoGeneradoTimeStamp";
-
-const PAGO_RECIBIDO = "ui.pagoRecibidoTimeStamp";
+const ORDENES = "ordenMedica.anularTimeStamp";
 const MEDIA_CHANGE = "ui.media.timeStamp";
-
 const SCREEN = "screen.timeStamp";
-export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, PAGO_GENERADO, PAGO_RECIBIDO)(LitElement) {
+const MOTIVOS_ANULACION = "motivosAnulacion.timeStamp";
+const DEVOLUCION_RECIBIDA = "ui.devolucionRecibidaTimeStamp";
+const DEVOLUCION_RECIBIDA_EF = "ui.devolucionEfRecibidaTimeStamp";
+const ERROR_TS = "ordenMedica.errorTimeStamp";
+export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, ORDENES, MOTIVOS_ANULACION, DEVOLUCION_RECIBIDA, DEVOLUCION_RECIBIDA_EF, ERROR_TS)(LitElement) {
     constructor() {
         super();
-        this.items = [];
+        this.item = [];
         this.hidden = true;
         this.ordenes = [];
         this.pagos = [];
@@ -40,6 +42,9 @@ export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, 
         this.messages = 0;
         this.pagoOK = false;
         this.escondido = true;
+        this.hidden = true;
+        this.area = "body";
+        this.motivosAnulacion = [];
     }
 
     static get styles() {
@@ -137,6 +142,7 @@ export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, 
                 transform: translate(-50%, -30%);
                 z-index: 100;
                 overflow: hidden;
+                padding: 1.5rem;
             }
             .grilla-resumen {
                 background-color: white; //var(--on-formulario);
@@ -200,231 +206,188 @@ export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, 
                 width: 4rem;
                 height: 4rem;
             }
+
+            .bono {
+                display: grid;
+                background-color: white;
+                color: var(--primario);
+                font-size: 1rem;
+                justify-self: center;
+                border-radius: 0.7rem;
+            }
+            .renglon {
+                display: grid;
+                grid-template-columns: 3fr 5fr;
+                justify-items: start;
+            }
+            .select select {
+                color: var(--primario);
+                border: 1px solid;
+            }
+
+            .select select:focus {
+                background-color: transparent;
+            }
+
+            .select option {
+                background-color: transparent;
+                color: var(--primario);
+            }
         `;
     }
 
     render() {
         return html`
             <div class="fit18 filtro">
+                <div class="select">
+                    <label>Búscar por</label>
+                    <select id="filtroX" @change="${this.busqueda}">
+                        <option selected value="B">Por Número de Bono</option>
+                        <option value="E">Por Expediente</option>
+                    </select>
+                </div>
                 <div class="input">
                     <input id="filtro" />
-                    <label for="filtro">Bono</label>
+                    <label id="labelFiltro" for="filtro">Bono</label>
                     <label error></label>
                     <label subtext></label>
                 </div>
-                <button raised etiqueta round @click="${this.filtrar}">
+                <button raised etiqueta round @click="${this.buscar}">
                     <div>${SEARCH}</div>
-                    <div class="justify-self-start">Filtrar</div>
+                    <div class="justify-self-start">Buscar</div>
                 </button>
             </div>
-            <div class="grid grilla">
-                <div class="grid cabecera-grilla">
-                    <div>Apellido y Nombre</div>
-                    <div>DNI</div>
-                    <div>CUIL Titular</div>
-                    <div>Bono Nº</div>
-                    <div>Importe</div>
-                    <div></div>
+            <div class="grid row bono" ?hidden=${this.item.length == 0}>
+                <div class="renglon" ?hidden=${this.item.length != 0 ? (this.item.expediente != "" ? true : false) : false}>
+                    <div>Número</div>
+                    <div>${this.item.numero}</div>
                 </div>
-
-                <div class="grid row detalle-grilla">
-                    ${this.items.map((item) => {
-                        return html`<div class="inner-grid fila-grilla" .item=${item}>
-                            <div>${item.paciente_Nombre}</div>
-                            <div>${item.paciente_Documento}</div>
-                            <div>${item.cuilTitular}</div>
-                            <div>${item.numero}</div>
-                            <div>${item.importeCaja}</div>
-                            <div class="check">
-                                <input id="c1" type="checkbox" @click="${this.sumar}" .item=${item} />
-                                <label for="c1">Sumar</label>
-                                <label></label>
-                            </div>
-                        </div>`;
-                    })}
+                <div class="renglon" ?hidden=${this.item.length != 0 ? (this.item.expediente == "" ? true : false) : false}>
+                    <div>Expediente</div>
+                    <div>${this.item.expediente}</div>
                 </div>
-            </div>
-            <div class="fit18 filtro">
+                <div class="renglon">
+                    <div>Fecha</div>
+                    <div>${new Date(this.item.fechaGeneracion).toLocaleDateString()}</div>
+                </div>
+                <div class="renglon">
+                    <div>CeMAP</div>
+                    <div>${this.item.cemap}</div>
+                </div>
+                <div class="renglon">
+                    <div>Historia Clínica</div>
+                    <div>${this.item.paciente_Documento}</div>
+                </div>
+                <div class="renglon">
+                    <div>Nombre Paciente</div>
+                    <div>${this.item.paciente_Nombre}</div>
+                </div>
+                <div class="renglon">
+                    <div>Parentesco</div>
+                    <div>${this.item.parentesco}</div>
+                </div>
+                <div class="renglon">
+                    <div>CUIT Titular</div>
+                    <div>${this.item.cuilTitular}</div>
+                </div>
+                <div class="renglon">
+                    <div>Efector</div>
+                    <div>${this.item.efector}</div>
+                </div>
+                <div class="renglon">
+                    <div>Fecha Realizacion</div>
+                    <div>${this.item.length != 0 ? new Date(this.item.fechaRealizacion).toLocaleDateString() : ""}</div>
+                </div>
+                <div class="renglon">
+                    <div>Hora Realización</div>
+                    <div>${this.item.horaRealizacion}</div>
+                </div>
+                <div class="renglon">
+                    <div>Valor Coseguro</div>
+                    <div>${this.item.importeCaja}</div>
+                </div>
+                <div class="renglon">
+                    <div>Modo de Pago</div>
+                    <div>${this.item.length != 0 ? (this.item.tipoPago == "EF" ? "Efectivo" : "Billetera Virtual") : ""}</div>
+                </div>
+                <div class="renglon">
+                    <div>Devuelve Dinero</div>
+                    <div><input type="checkbox" id="devuelveDinero" /></div>
+                </div>
+                <div class="select">
+                    <label>Motivo Anulación</label>
+                    <select id="motivos">
+                        ${this.motivosAnulacion.map((motivo) => {
+                            return html`<option value="${motivo.id}">${motivo.descripcion}</option>`;
+                        })}
+                    </select>
+                </div>
                 <div class="grid column">
-                    <div class="input valores" disabled>
-                        <input id="importeEfectivo" .value="${this.efectivo}" />
-                        <label for="importeEfectivo">Efectivo</label>
-                        <label error></label>
-                    </div>
-
-                    <div class="input valores">
-                        <input id="importeMP" .value="${this.importeMP}" @blur=${this.mp} />
-                        <label for="importeMP">Mercado Pago</label>
-                        <label error></label>
-                    </div>
-                    <div class="input valores" disabled>
-                        <input id="importe" .value="${this.importeTotal}" />
-                        <label for="importe">Total a Pagar</label>
-                        <label error></label>
-                    </div>
-                    <button class="align-self-center" raised etiqueta round @click="${this.prepararPago}">
-                        <div>${PAGAR}</div>
-                        <div class="justify-self-start">Preparar Pago</div>
+                    <button class="align-self-center" raised etiqueta round @click="${this.anular}">
+                        <div>${ANULAR}</div>
+                        <div class="justify-self-start">Anular Orden</div>
+                    </button>
+                    <button class="align-self-center" raised etiqueta round @click="${this.cancelar}">
+                        <div>${CANCEL}</div>
+                        <div class="justify-self-start">Cancelar</div>
                     </button>
                 </div>
             </div>
-
-            <dialog class="resumen" id="resumen">
-                <div class="grid column titulo-resumen">
-                    <div class="justify-self-center">Ordenes Médicas a Pagar</div>
-                    <div @click=${this.cerrar} class="boton-cerrar justify-self-end">X</div>
-                </div>
-
-                <div class="grid grilla-resumen">
-                    <div class="grid cabecera-grilla-resumen">
-                        <div>Orden Médica</div>
-                        <div>Importe</div>
-                    </div>
-                    <div class="grid row detalle-grilla-resumen">
-                        ${this.pagos.map((pago) => {
-                            return html` <div class="inner-grid fila-grilla-resumen">
-                                <div>${pago.numero}</div>
-                                <div>${pago.importe}</div>
-                            </div>`;
-                        })}
-                    </div>
-                </div>
-                <div class="grid row">
-                    <div class="grid column">
-                        <div>Total Efectivo: $${this.efectivo}</div>
-                        <div>Total MP: $${this.importeMP}</div>
-                        <div>Total: $${this.importeTotal}</div>
-                    </div>
-                </div>
-                <button raised etiqueta round @click="${this.pagar}">
-                    <div>${PAGAR}</div>
-                    <div class="justify-self-start">PAGAR</div>
-                </button>
-            </dialog>
-            <dialog id="pago" class="resumen">
-                <div class="titulo-pago">${this.importeMP != 0 ? "Por favor, Escanee el QR" : "Pago Realizado Con éxito!"}</div>
+            <dialog id="devolucion" class="resumen">
                 <div ?hidden="${this.escondido}" class="ok" id="ok">${OK}</div>
-                <div class="titulo-pago" ?hidden="${this.escondido}">El pago ha sido realizado</div>
+                <div ?hidden="${!this.escondido}" class="ok" id="ok">${WAIT}</div>
+                <div class="titulo-pago" ?hidden="${this.escondido}">La Anulación ha sido realizada</div>
+                <div class="titulo-pago" ?hidden="${!this.escondido}">Aguarde un momento...</div>
                 <div class="grid column">
                     <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}" ?hidden=${this.escondido}>
                         <div class="justify-self-start">ACEPTAR</div>
-                    </button>
-                    <button class="align-self-end" raised etiqueta round @click="${this.cerrarPago}" ?hidden=${!this.escondido}>
-                        <div class="justify-self-start">CANCELAR</div>
                     </button>
                 </div>
             </dialog>
         `;
     }
 
-    cerrar() {
-        const resumen = this.shadowRoot.querySelector("#resumen");
-        resumen.close();
+    busqueda() {
+        const filtroX = this.shadowRoot.querySelector("#filtroX");
+        const labelFiltro = this.shadowRoot.querySelector("#labelFiltro");
+        labelFiltro.innerHTML = filtroX.value == "B" ? "Bono" : "Expediente";
+        this.update();
     }
+
     cerrarPago() {
-        const resumen = this.shadowRoot.querySelector("#pago");
-        this.blanqueo();
+        const resumen = this.shadowRoot.querySelector("#devolucion");
         resumen.close();
-    }
-
-    filtrar() {
-        //this.item.filter();
-        const filtro = this.shadowRoot.querySelector("#filtro").value.toUpperCase();
-
-        this.items = store.getState().ordenMedica.entities.filter((item) => {
-            return (
-                item.numero.toString().toUpperCase().indexOf(filtro) != -1 ||
-                item.cuilTitular.toString().toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
-                item.paciente_Documento.toString().toUpperCase().indexOf(filtro.toString().toUpperCase()) != -1 ||
-                item.paciente_Nombre.toUpperCase().indexOf(filtro) != -1
-            );
-        });
-        this.update();
-    }
-
-    sumar(e) {
-        if (e.currentTarget.checked) {
-            this.importeTotal = parseFloat(this.importeTotal) + e.currentTarget.item.importeCaja;
-            this.efectivo = parseFloat(this.importeTotal) - parseFloat(this.importeMP);
-        } else {
-            this.importeTotal = parseFloat(this.importeTotal) - e.currentTarget.item.importeCaja;
-            this.efectivo = this.importeTotal;
-            this.importeMP = 0;
-        }
-        this.update();
-    }
-
-    mp() {
-        const importeTotal = this.shadowRoot.querySelector("#importe");
-        const efectivo = this.shadowRoot.querySelector("#importeEfectivo");
-        const importeMP = this.shadowRoot.querySelector("#importeMP");
-        if (importeMP.value < 0 || parseFloat(importeMP.value) > parseFloat(importeTotal.value)) {
-            alert("El valor ingresado en Mercado Pago es incorrecto");
-            this.importeMP = 0;
-            return false;
-        }
-        this.efectivo = parseFloat(importeTotal.value) - parseFloat(importeMP.value);
-        this.importeMP = parseFloat(importeMP.value);
-        this.update();
-    }
-
-    prepararPago(e) {
-        if (parseFloat(this.efectivo) == 0 && parseFloat(this.importeMP) == 0) {
-            alert("Debe seleccionar los bonos a pagar");
-            return false;
-        }
-        this.ordenes = [];
-        this.pagos = [];
-
-        const checks = this.shadowRoot.querySelectorAll("#c1");
-        const checksToArray = Array.apply(null, checks);
-
-        checksToArray.forEach((orden) => {
-            if (orden.checked) {
-                let pagos = {};
-                pagos.id = orden.item.id;
-                pagos.importe = orden.item.importeCaja;
-                pagos.numero = orden.item.numero;
-                this.pagos.push(pagos);
-                this.ordenes.push({ id: pagos.id, importe: pagos.importe });
-            }
-        });
-        this.body = {};
-        this.body = {
-            mercadoPago: this.importeMP,
-            efectivo: this.efectivo,
-            caja: localStorage.getItem("caja"),
-            storeId: "P0002",
-        };
-        this.body.ordenes = this.ordenes;
-        const resumen = this.shadowRoot.querySelector("#resumen");
-        resumen.showModal();
-        this.update();
-    }
-
-    pagar() {
-        store.dispatch(recibirPago(this.body));
-    }
-
-    blanqueo() {
-        /*     this.importeMP = 0;
-        this.importeTotal = 0;
-        this.efectivo = 0;
-        this.update(); */
-        this.refresh();
-    }
-
-    refresh() {
-        const checks = this.shadowRoot.querySelectorAll("#c1");
-        checks.forEach((check) => {
-            check.checked = false;
-        });
+        this.item = [];
         const filtro = this.shadowRoot.querySelector("#filtro");
         filtro.value = "";
-        store.dispatch(pendientesXCaja(localStorage.getItem("caja")));
-        this.importeMP = 0;
-        this.importeTotal = 0;
-        this.efectivo = 0;
+        this.update();
+    }
+
+    anular() {
+        const devuelveDinero = this.shadowRoot.querySelector("#devuelveDinero");
+        let body = {
+            idOrdenMedica: this.item.id,
+            idCaja: parseInt(localStorage.getItem("caja"), 10),
+            medioPago: this.item.tipoPago,
+            devuelveDinero: devuelveDinero.checked,
+        };
+        store.dispatch(devolverPago(body));
+    }
+
+    buscar() {
+        const filtro = this.shadowRoot.querySelector("#filtro").value.toUpperCase();
+        const filtroX = this.shadowRoot.querySelector("#filtroX");
+        if (filtroX == "B") {
+            store.dispatch(pagadosXNumero(filtro));
+        } else {
+            store.dispatch(pagadosXExpediente(filtro));
+        }
+    }
+
+    cancelar() {
+        this.item = [];
+        const filtro = this.shadowRoot.querySelector("#filtro");
+        filtro.value = "";
         this.update();
     }
 
@@ -442,14 +405,39 @@ export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, PENDIENTES, 
             this.mediaSize = state.ui.media.size;
             this.hidden = true;
             const isCurrentScreen = ["anulacion"].includes(state.screen.name);
-            if (isInLayout(state, this.area) && !isCurrentScreen) {
-                //activo evento de gestos
+            if (isInLayout(state, this.area) && isCurrentScreen) {
                 this.opciones = this.shadowRoot.querySelector("#opciones");
-                gestures(this.opciones, this.gestos, this);
+                //gestures(this.opciones, this.gestos, this);
                 this.hidden = false;
             }
-
             this.update();
+        }
+
+        if (name == ORDENES) {
+            this.item = state.ordenMedica.anular;
+            this.update();
+        }
+        if (name == MOTIVOS_ANULACION) {
+            this.motivosAnulacion = state.motivosAnulacion.entities;
+            this.update();
+        }
+        if (name == DEVOLUCION_RECIBIDA) {
+            const devolucion = this.shadowRoot.querySelector("#devolucion");
+            devolucion.showModal();
+            this.escondido = false;
+            this.devolucionOK = true;
+            this.update();
+        }
+        if (name == DEVOLUCION_RECIBIDA_EF) {
+            const devolucion = this.shadowRoot.querySelector("#devolucion");
+            devolucion.showModal();
+            this.escondido = false;
+            this.devolucionOK = true;
+            this.update();
+        }
+        if (name == ERROR_TS) {
+            alert("No Se encontró la Orden");
+            this.cancelar();
         }
     }
 

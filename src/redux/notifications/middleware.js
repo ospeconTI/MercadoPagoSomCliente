@@ -1,7 +1,7 @@
 /** @format */
 
 import { WebSocketNotificaciones } from "../../libs/webSocket";
-import { recibirPagoMP, sumarMensaje } from "../ui/actions";
+import { recibirDevolucionEF, recibirDevolucionMP, recibirPagoMP, sumarMensaje } from "../ui/actions";
 
 import {
     CONNECT,
@@ -65,6 +65,12 @@ export const onMessage =
             }
             if (action.message.de == "MP") {
                 dispatch(recibirPagoMP());
+            }
+            if (action.message.de == "MP-") {
+                dispatch(recibirDevolucionMP());
+            }
+            if (action.message.de == "EF") {
+                dispatch(recibirDevolucionEF());
             }
         }
     };

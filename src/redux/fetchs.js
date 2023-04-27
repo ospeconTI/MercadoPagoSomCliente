@@ -3,15 +3,13 @@
 import { fetchFactory } from "../libs/fetchFactory";
 import { ODataEntity, ODataFetchFactory } from "@brunomon/odata-fetch-factory";
 
-let webApiExpedientes = SERVICE_URL;
 let webApi = SERVICE_URL + "/api";
+let webApiOrdenesMedicas = OM_SERVICE_URL;
 
 const expedienteOdataFactory = ODataFetchFactory({
     fetch: fetch,
-    domain: webApiExpedientes,
+    domain: webApiOrdenesMedicas,
 });
-
-let webApiOrdenesMedicas = OM_SERVICE_URL;
 
 export const pendietesPorCaja = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pendientesXCaja");
 
@@ -21,3 +19,8 @@ export const recuperoFetch = ODataEntity(expedienteOdataFactory, "PedirRecupero"
 export const cambiarPasswordFetch = ODataEntity(expedienteOdataFactory, "CambiarPassword");
 
 export const recibirPagoFetch = fetchFactory(webApiOrdenesMedicas, "MercadoPago/RecibirPago");
+export const ordenxNumeroFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxNumero");
+export const ordenxExpedienteFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxExpediente");
+export const anularOrdenFetch = fetchFactory(webApiOrdenesMedicas, "MercadoPago/DevolverPago");
+
+export const motivosAnulacionAllFetch = fetchFactory(webApiOrdenesMedicas, "MotivosAnulacion/getAll");

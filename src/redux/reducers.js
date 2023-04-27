@@ -9,6 +9,7 @@ import { reducer as ordenMedica } from "./OrdenMedica/reducer";
 import { reducer as mercadoPagoReducer } from "./MercadoPago/reducer";
 import { reducer as cajaReducer } from "./caja/reducer";
 import { reducer as notifiationsReducer } from "./notifications/reducer";
+import { reducer as motivosAnulacionReducer } from "./motivosAnulacion/reducer";
 
 export const rootReducer = (state = {}, action) => {
     const presentacionesEstadosRed = state.presentacionesEstados;
@@ -21,5 +22,6 @@ export const rootReducer = (state = {}, action) => {
         mercadoPago: mercadoPagoReducer(state.mercadoPago, action),
         caja: cajaReducer(state.caja, action),
         notifiations: notifiationsReducer(state.notifiations, action),
+        motivosAnulacion: motivosAnulacionReducer(state.motivosAnulacion, action),
     };
 };

@@ -18,8 +18,8 @@ import { selection } from "../../redux/ui/actions";
 import { get, set } from "../../redux/caja/actions";
 import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
 
-const MEDIA_CHANGE = "ui.media.timeStamp";
 const SELECTION = "ui.menu.timeStamp";
+const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
 const USUARIO = "autorizacion.loginTimeStamp";
 const SETCAJA = "caja.setTimeStamp";
@@ -32,7 +32,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
         this.visible = false;
         this.arrastrando = false;
         this.usuario = null;
-        this.optionsCount = 4;
+        this.optionsCount = 3;
         this.defaultOption = 0;
         this.selectedOption = new Array(this.optionsCount).fill(false);
         this.selectedOption[this.defaultOption] = true;
@@ -198,20 +198,20 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
 
             <div id="opciones" class="grid column" @click=${this.toggleMenu}>
                 <button raised circle action class="menu-button">${RIGHT}</button>
-                <button link etiqueta ?selected="${this.selectedOption[1]}" @click=${this.click} .option=${"formPago"}>
+                <button link etiqueta ?selected="${this.selectedOption[0]}" @click=${this.click} .option=${"formPago"}>
                     <div>${PAGAR}</div>
                     <div class="justify-self-start">Caja</div>
                 </button>
 
-                <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"anulacion"}>
+                <button link etiqueta ?selected="${this.selectedOption[1]}" @click=${this.click} .option=${"anulacion"}>
                     <div>${ANULACION}</div>
                     <div class="justify-self-start">Anulación</div>
                 </button>
-                <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>
+                <!--  <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>
                     <div>${PERSON}</div>
                     <div class="justify-self-start">Login</div>
-                </button>
-                <button link ?selected="${this.selectedOption[0]}" @click="${this.mostrarCaja}" .option=${"opcion0"}>${SETTINGS}</button>
+                </button> -->
+                <button link ?selected="${this.selectedOption[2]}" @click="${this.mostrarCaja}" .option=${"opcion0"}>${SETTINGS}</button>
             </div>
 
             <div id="cajaDiv" class="caja" ?hidden=${!this.formularioCajaVisible}>
@@ -267,9 +267,15 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
 
         store.dispatch(selection(e.currentTarget.option));
         store.dispatch(goTo(e.currentTarget.option));
+        if (e.currentTarget.option == "Caja") {
+            store.dispatch(pendientesXCaja());
+        }
     }
 
     mostrarCaja(e) {
+        this.selectedOption = new Array(this.optionsCount).fill(false);
+        this.selectedOption[Array.from(e.currentTarget.parentNode.children).indexOf(e.currentTarget) - 1] = true;
+
         this.formularioCajaVisible = !this.formularioCajaVisible;
         this.caja = localStorage.getItem("caja");
         this.update();

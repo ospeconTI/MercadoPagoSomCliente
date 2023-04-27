@@ -21,6 +21,8 @@ export const SHOW_CONFIRM = "[ui] show confirm";
 export const SUMAR_MENSAJE = "[ui] sumar mensaje";
 export const BLANQUEAR_MENSAJE = "[ui] blanquear mensaje";
 export const RECIBIR_PAGO_MP = "[ui] recibir pago MP";
+export const RECIBIR_DEVOLUCION_MP = "[ui] recibir devolucion MP";
+export const RECIBIR_DEVOLUCION_EF = "[ui] recibir devolucion EF";
 
 export const showSpinner = () => ({
     type: SHOW_SPINNER,
@@ -82,4 +84,11 @@ export const blanquearMensaje = () => ({
 
 export const recibirPagoMP = () => ({
     type: RECIBIR_PAGO_MP,
+});
+
+export const recibirDevolucionMP = () => ({
+    type: RECIBIR_DEVOLUCION_MP,
+});
+export const recibirDevolucionEF = () => ({
+    type: RECIBIR_DEVOLUCION_EF,
 });
