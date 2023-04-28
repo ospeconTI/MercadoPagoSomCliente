@@ -267,7 +267,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
 
         store.dispatch(selection(e.currentTarget.option));
         store.dispatch(goTo(e.currentTarget.option));
-        if (e.currentTarget.option == "Caja") {
+        if (e.currentTarget.option == "formPago") {
             store.dispatch(pendientesXCaja());
         }
     }

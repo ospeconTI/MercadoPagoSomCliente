@@ -119,6 +119,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
             }
             .valores label {
                 font-size: 1.2rem;
+                color: var(--on-formulario);
             }
 
             .valores select {
@@ -221,6 +222,9 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                 width: 4rem;
                 height: 4rem;
             }
+            .orden {
+                cursor: pointer;
+            }
         `;
     }
 
@@ -249,15 +253,14 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
             </div>
             <div class="grid grilla">
                 <div class="grid cabecera-grilla">
-                    <div>Apellido y Nombre</div>
-                    <div>DNI</div>
-                    <div>CUIL Titular</div>
+                    <div class="orden" .ordenax=${"paciente_Nombre"} @click=${this.ordenar}>Apellido y Nombre</div>
+                    <div class="orden" .ordenax=${"paciente_Documento"} @click=${this.ordenar}>DNI</div>
+                    <div class="orden" .ordenax=${"cuilTitular"} @click=${this.ordenar}>CUIL Titular</div>
                     <div>Efector</div>
                     <div>Especialidad</div>
-                    <div>Bono Nº</div>
-                    <div>Expediente</div>
+                    <div class="orden" .ordenax=${"numero"} @click=${this.ordenar}>Bono Nº</div>
+                    <div class="orden" .ordenax=${"expediente"} @click=${this.ordenar}>Expediente</div>
                     <div>Importe</div>
-                    <div></div>
                 </div>
 
                 <div class="grid row detalle-grilla">
@@ -457,6 +460,31 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
 
     pagar() {
         store.dispatch(recibirPago(this.body));
+    }
+
+    ordenar(e) {
+        const orden = e.currentTarget.ordenax;
+        this.ordenarArray(orden);
+        this.update;
+    }
+    ordenarArray(orden) {
+        this.items.sort((a, b) => {
+            const propA = a[orden]; // ignore upper and lowercase
+            const propB = b[orden]; // ignore upper and lowercase
+
+            if (propA < propB) {
+                this.update();
+                return -1;
+            }
+            if (propA > propB) {
+                this.update();
+                return 1;
+            }
+
+            // names must be equal
+            return 0;
+        });
+        this.update();
     }
 
     blanqueo() {
