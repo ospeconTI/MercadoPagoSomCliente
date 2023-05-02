@@ -256,8 +256,8 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                     <div class="orden" .ordenax=${"paciente_Nombre"} @click=${this.ordenar}>Apellido y Nombre</div>
                     <div class="orden" .ordenax=${"paciente_Documento"} @click=${this.ordenar}>DNI</div>
                     <div class="orden" .ordenax=${"cuilTitular"} @click=${this.ordenar}>CUIL Titular</div>
-                    <div>Efector</div>
-                    <div>Especialidad</div>
+                    <div class="orden" .ordenax=${"efector"} @click=${this.ordenar}>Efector</div>
+                    <div class="orden" .ordenax=${"especialidad"} @click=${this.ordenar}>Especialidad</div>
                     <div class="orden" .ordenax=${"numero"} @click=${this.ordenar}>Bono Nº</div>
                     <div class="orden" .ordenax=${"expediente"} @click=${this.ordenar}>Expediente</div>
                     <div>Importe</div>
@@ -273,7 +273,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                             <div>${item.especialidad}</div>
                             <div>${item.numero}</div>
                             <div>${item.expediente}</div>
-                            <div>${item.importeCaja}</div>
+                            <div>$ ${item.importeCaja.toFixed(2)}</div>
                             <div class="check">
                                 <input id="c1" type="checkbox" @click="${this.sumar}" .item=${item} />
                                 <label for="c1">Sumar</label>
@@ -465,26 +465,21 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
     ordenar(e) {
         const orden = e.currentTarget.ordenax;
         this.ordenarArray(orden);
-        this.update;
+        this.update();
     }
+
     ordenarArray(orden) {
         this.items.sort((a, b) => {
-            const propA = a[orden]; // ignore upper and lowercase
-            const propB = b[orden]; // ignore upper and lowercase
-
+            const propA = a[orden];
+            const propB = b[orden];
             if (propA < propB) {
-                this.update();
                 return -1;
             }
             if (propA > propB) {
-                this.update();
                 return 1;
             }
-
-            // names must be equal
             return 0;
         });
-        this.update();
     }
 
     blanqueo() {
