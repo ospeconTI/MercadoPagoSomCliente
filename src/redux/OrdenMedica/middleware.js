@@ -1,7 +1,7 @@
 /** @format */
 
 import { noticarCajaVacia } from "../caja/actions";
-import { ordenxExpedienteFetch, ordenxNumeroFetch, pendietesPorCaja } from "../fetchs";
+import { ordenesSinCerrarteFetch, ordenxExpedienteFetch, ordenxNumeroFetch, pendietesPorCaja } from "../fetchs";
 import { RESTRequest } from "../rest/actions";
 import { blanquearMensaje } from "../ui/actions";
 import {
@@ -15,6 +15,9 @@ import {
     PAGADOS_X_EXPEDIENTE,
     PAGADOS_X_EXPEDIENTE_SUCCESS,
     PAGADOS_X_EXPEDIENTE_ERROR,
+    BONOS_SIN_CERRAR,
+    BONOS_SIN_CERRAR_SUCCESS,
+    BONOS_SIN_CERRAR_ERROR,
 } from "./actions";
 
 export const pendietesXCaja =
@@ -62,4 +65,18 @@ export const pagadosXexpediente =
         }
     };
 
-export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente];
+export const ordenesSinCerrar =
+    ({ dispatch }) =>
+    (next) =>
+    (action) => {
+        next(action);
+        if (action.type === BONOS_SIN_CERRAR) {
+            if (localStorage.getItem("caja") != undefined) {
+                dispatch(RESTRequest(ordenesSinCerrarteFetch, localStorage.getItem("caja"), BONOS_SIN_CERRAR_SUCCESS, BONOS_SIN_CERRAR_ERROR));
+                dispatch(blanquearMensaje());
+            } else {
+                dispatch(noticarCajaVacia());
+            }
+        }
+    };
+export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente, ordenesSinCerrar];

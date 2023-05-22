@@ -10,13 +10,13 @@ import { logo } from "@brunomon/template-lit/src/views/css/logo";
 import { select } from "@brunomon/template-lit/src/views/css/select";
 import { button } from "@brunomon/template-lit/src/views/css/button";
 import { input } from "@brunomon/template-lit/src/views/css/input";
-import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK, ANULACION, PAGAR } from "../../../assets/icons/svgs";
+import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK, ANULACION, PAGAR, CIERRE } from "../../../assets/icons/svgs";
 import { logout } from "../../redux/autorizacion/actions";
 import { gesturesController } from "@brunomon/template-lit/src/views/controllers/gesturesController";
 import { selection } from "../../redux/ui/actions";
 
 import { get, set } from "../../redux/caja/actions";
-import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
+import { bonosSinCerrar, pendientesXCaja } from "../../redux/OrdenMedica/actions";
 
 const SELECTION = "ui.menu.timeStamp";
 const MEDIA_CHANGE = "ui.media.timeStamp";
@@ -207,6 +207,12 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                     <div>${ANULACION}</div>
                     <div class="justify-self-start">Anulación</div>
                 </button>
+
+                <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"cierre"}>
+                    <div>${CIERRE}</div>
+                    <div class="justify-self-start">Cierre</div>
+                </button>
+
                 <!--  <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>
                     <div>${PERSON}</div>
                     <div class="justify-self-start">Login</div>
@@ -269,6 +275,9 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
         store.dispatch(goTo(e.currentTarget.option));
         if (e.currentTarget.option == "formPago") {
             store.dispatch(pendientesXCaja());
+        }
+        if (e.currentTarget.option == "cierre") {
+            store.dispatch(bonosSinCerrar());
         }
     }
 

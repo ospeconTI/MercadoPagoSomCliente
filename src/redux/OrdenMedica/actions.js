@@ -12,6 +12,10 @@ export const PAGADOS_X_EXPEDIENTE = "[OrdenMedica] pagados x expediente";
 export const PAGADOS_X_EXPEDIENTE_SUCCESS = "[OrdenMedica] pagados x expediente Success";
 export const PAGADOS_X_EXPEDIENTE_ERROR = "[OrdenMedica] pagados x expediente Error";
 
+export const BONOS_SIN_CERRAR = "[OrdenMedica] bonos sin cerrar";
+export const BONOS_SIN_CERRAR_SUCCESS = "[OrdenMedica] bonos sin cerrar success";
+export const BONOS_SIN_CERRAR_ERROR = "[OrdenMedica] bonos sin cerrar error";
+
 export const pendientesXCaja = () => ({
     type: PENDIENTES_X_CAJA,
 });
@@ -24,4 +28,8 @@ export const pagadosXNumero = (numero) => ({
 export const pagadosXExpediente = (expediente) => ({
     type: PAGADOS_X_EXPEDIENTE,
     expediente: expediente,
+});
+
+export const bonosSinCerrar = () => ({
+    type: BONOS_SIN_CERRAR,
 });

@@ -10,6 +10,7 @@ import { reducer as mercadoPagoReducer } from "./MercadoPago/reducer";
 import { reducer as cajaReducer } from "./caja/reducer";
 import { reducer as notifiationsReducer } from "./notifications/reducer";
 import { reducer as motivosAnulacionReducer } from "./motivosAnulacion/reducer";
+import { reducer as cierreReducer } from "./cierre/reducer";
 
 export const rootReducer = (state = {}, action) => {
     const presentacionesEstadosRed = state.presentacionesEstados;
@@ -23,5 +24,6 @@ export const rootReducer = (state = {}, action) => {
         caja: cajaReducer(state.caja, action),
         notifiations: notifiationsReducer(state.notifiations, action),
         motivosAnulacion: motivosAnulacionReducer(state.motivosAnulacion, action),
+        cierre: cierreReducer(state.cierre, action),
     };
 };

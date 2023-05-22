@@ -11,6 +11,7 @@ import { menuPrincipal } from "./headers/menu";
 import { spinner } from "@brunomon/template-lit/src/views/css/spinner";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { anulacion } from "./componentes/anulacion";
+import { cierre } from "./componentes/cierre";
 
 const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
@@ -60,6 +61,7 @@ export class viewManager extends connect(store, MEDIA_CHANGE, SCREEN, SELECTION)
             <menu-principal area="header"></menu-principal>
             <form-pago area="body"></form-pago>
             <anulacion-component area="body"></anulacion-component>
+            <cierre-component area="body"></cierre-component>
         `;
     }
 

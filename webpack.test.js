@@ -21,6 +21,7 @@ module.exports = merge(common, {
     plugins: [
         new webpack.DefinePlugin({
             SERVICE_URL: JSON.stringify("http://200.80.227.180/promocionsocial"),
+            OM_SERVICE_URL: JSON.stringify("http://localhost:5028"),
         }),
     ],
 });

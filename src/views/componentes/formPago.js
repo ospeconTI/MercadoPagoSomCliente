@@ -501,6 +501,8 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
         this.importeMP = 0;
         this.importeTotal = 0;
         this.efectivo = 0;
+        this.escondido = true;
+        this.pagoOK = false;
         this.update();
     }
 

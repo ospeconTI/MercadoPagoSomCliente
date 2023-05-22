@@ -19,8 +19,11 @@ export const recuperoFetch = ODataEntity(expedienteOdataFactory, "PedirRecupero"
 export const cambiarPasswordFetch = ODataEntity(expedienteOdataFactory, "CambiarPassword");
 
 export const recibirPagoFetch = fetchFactory(webApiOrdenesMedicas, "MercadoPago/RecibirPago");
-export const ordenxNumeroFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxNumero");
-export const ordenxExpedienteFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxExpediente");
 export const anularOrdenFetch = fetchFactory(webApiOrdenesMedicas, "MercadoPago/DevolverPago");
 
+export const ordenxNumeroFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxNumero");
+export const ordenxExpedienteFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/pagadoxExpediente");
+export const ordenesSinCerrarteFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/bonosSinCerrar");
+
 export const motivosAnulacionAllFetch = fetchFactory(webApiOrdenesMedicas, "MotivosAnulacion/getAll");
+export const cerrarCajaFetch = fetchFactory(webApiOrdenesMedicas, "Cierres/CerrarCaja");

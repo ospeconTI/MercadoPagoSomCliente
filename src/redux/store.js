@@ -13,10 +13,11 @@ import { middleware as mercadoPago } from "./MercadoPago/middleware";
 import { middleware as caja } from "./caja/middleware";
 import { middleware as notifications } from "./notifications/middleware";
 import { middleware as motivosAnulacion } from "./motivosAnulacion/middleware";
+import { middleware as cierre } from "./cierre/middleware";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-let mdw = [api, rest, ...ui, ...route, ...autorizacion, ...ordenMedica, ...mercadoPago, ...caja, ...notifications, ...motivosAnulacion];
+let mdw = [api, rest, ...ui, ...route, ...autorizacion, ...ordenMedica, ...mercadoPago, ...caja, ...notifications, ...motivosAnulacion, ...cierre];
 
 if (process.env.NODE_ENV !== "production") {
     mdw = [...mdw, logger];
