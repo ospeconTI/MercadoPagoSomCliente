@@ -143,8 +143,8 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 grid-template-columns: 1fr;
                 justify-items: center;
                 background-color: white;
-                width: 50%;
-                height: 75%;
+                width: 40%;
+                height: 50%;
                 border-radius: 1.5rem;
                 border: none;
                 padding: 0.5rem;
@@ -152,9 +152,11 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                transform: translate(-50%, -30%);
+                transform: translate(-50%, -50%);
                 z-index: 100;
                 overflow: hidden;
+                align-self: center;
+                align-items: center;
             }
             .grilla-resumen {
                 background-color: white; //var(--on-formulario);
@@ -185,7 +187,9 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 justify-self: normal;
                 font-size: 2rem;
                 color: var(--primario);
+                align-self: start;
             }
+
             .boton-cerrar {
                 cursor: pointer;
                 padding: 1rem;
