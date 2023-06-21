@@ -1,7 +1,7 @@
 /** @format */
 
 import { noticarCajaVacia } from "../caja/actions";
-import { ordenesSinCerrarteFetch, ordenxExpedienteFetch, ordenxNumeroFetch, pendietesPorCaja } from "../fetchs";
+import { listarCierreFetch, ordenesSinCerrarteFetch, ordenxExpedienteFetch, ordenxNumeroFetch, pendietesPorCaja } from "../fetchs";
 import { RESTRequest } from "../rest/actions";
 import { blanquearMensaje } from "../ui/actions";
 import {
@@ -18,6 +18,7 @@ import {
     BONOS_SIN_CERRAR,
     BONOS_SIN_CERRAR_SUCCESS,
     BONOS_SIN_CERRAR_ERROR,
+    LISTAR_CIERRE,
 } from "./actions";
 
 export const pendietesXCaja =
@@ -79,4 +80,19 @@ export const ordenesSinCerrar =
             }
         }
     };
-export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente, ordenesSinCerrar];
+
+export const listaCierre =
+    ({ dispatch }) =>
+    (next) =>
+    (action) => {
+        next(action);
+        if (action.type === LISTAR_CIERRE) {
+            if (localStorage.getItem("caja") != undefined) {
+                dispatch(RESTRequest(listarCierreFetch, action.nroCierre + "/" + localStorage.getItem("caja"), BONOS_SIN_CERRAR_SUCCESS, BONOS_SIN_CERRAR_ERROR));
+                dispatch(blanquearMensaje());
+            } else {
+                dispatch(noticarCajaVacia());
+            }
+        }
+    };
+export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente, ordenesSinCerrar, listaCierre];

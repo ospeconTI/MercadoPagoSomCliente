@@ -10,7 +10,7 @@ import { logo } from "@brunomon/template-lit/src/views/css/logo";
 import { select } from "@brunomon/template-lit/src/views/css/select";
 import { button } from "@brunomon/template-lit/src/views/css/button";
 import { input } from "@brunomon/template-lit/src/views/css/input";
-import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK, ANULACION, PAGAR, CIERRE } from "../../../assets/icons/svgs";
+import { MENU, RIGHT, PERSON, SETTINGS, SAVE, OK, ANULACION, PAGAR, CIERRE, LISTA } from "../../../assets/icons/svgs";
 import { logout } from "../../redux/autorizacion/actions";
 import { gesturesController } from "@brunomon/template-lit/src/views/controllers/gesturesController";
 import { selection } from "../../redux/ui/actions";
@@ -211,6 +211,11 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                 <button link etiqueta ?selected="${this.selectedOption[2]}" @click=${this.click} .option=${"cierre"}>
                     <div>${CIERRE}</div>
                     <div class="justify-self-start">Cierre</div>
+                </button>
+
+                <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"listaCierre"}>
+                    <div>${LISTA}</div>
+                    <div class="justify-self-start">Consulta Cierres</div>
                 </button>
 
                 <!--  <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>

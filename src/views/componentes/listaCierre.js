@@ -14,7 +14,7 @@ import { AlertControl } from "./alert";
 import { ConfirmControl } from "./confirm";
 import { showAlert, showConfirm } from "../../redux/ui/actions";
 import { showSpinner } from "../../redux/api/actions";
-import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
+import { listarCierre, pendientesXCaja } from "../../redux/OrdenMedica/actions";
 import { recibirPago } from "../../redux/MercadoPago/actions";
 import { isInLayout } from "../../redux/screens/screenLayouts";
 import { cerrarCaja } from "../../redux/cierre/actions";
@@ -25,7 +25,7 @@ const SCREEN = "screen.timeStamp";
 const PENDIENTES = "ordenMedica.bonosSinCerrarTimeStamp";
 const CIERRE_TS = "cierre.cierreTimeStamp";
 
-export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIERRE_TS)(LitElement) {
+export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIERRE_TS)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -99,7 +99,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 gap: 3rem;
                 padding: 2rem;
                 background-color: var(--formulario);
-                grid-template-columns: 1fr 2fr;
+                grid-template-columns: 1fr 2fr 1fr;
             }
             .grilla {
                 background-color: var(--formulario);
@@ -279,10 +279,16 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
     render() {
         return html`
             <div class="fit18 filtro">
-                <div class="titulo">CIERRE DE CAJA</div>
-                <button class="justify-self-end" raised etiqueta round @click="${this.cerrarCaja}">
+                <div class="titulo">Listado de Cierres</div>
+                <div class="input">
+                    <input id="nro" />
+                    <label for="nro">Número de Cierre</label>
+                    <label error>No puede ser vacio</label>
+                    <label subtext>Requerido</label>
+                </div>
+                <button class="justify-self-end" raised etiqueta round @click="${this.imprimir}">
                     <div>${CIERRE}</div>
-                    <div class="justify-self-start">CERRAR CAJA</div>
+                    <div class="justify-self-start">Listar</div>
                 </button>
             </div>
             <div class="grid grilla">
@@ -318,7 +324,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                     })}
                 </div>
 
-                <dialog class="resumen" id="dialogo">
+                <!-- <dialog class="resumen" id="dialogo">
                     <div class="grid column titulo-resumen">
                         <div class="justify-self-center">Se ha generado el cierre Nro: ${this.nroCierre}</div>
                         <div @click=${this.cerrar} class="boton-cerrar justify-self-end">X</div>
@@ -328,7 +334,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                         <div>${PRINT}</div>
                         <div class="justify-self-start">IMPRIMIR</div>
                     </button>
-                </dialog>
+                </dialog> -->
             </div>
 
             <div class="footer">
@@ -362,7 +368,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 <div class="footer-col">
                     <div class="tituloItems grid">EXCEPCION</div>
                     ${this.excepcion.map((item) => {
-                        return html` <div class="grid column">
+                        return html` <div class="grid totales">
                             <div>${item.id}</div>
                             <div>${item.cantidad}</div>
                         </div>`;
@@ -388,10 +394,9 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
         dialogo.close();
     }
 
-    cerrarCaja() {
-        if (confirm("Va a realizar el Cierre de la Caja. Está Seguro")) {
-            store.dispatch(cerrarCaja());
-        }
+    imprimir() {
+        const nroCierre = this.shadowRoot.querySelector("#nro").value;
+        store.dispatch(listarCierre(nroCierre));
     }
 
     ordenar(e) {
@@ -427,7 +432,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
         if (name == SCREEN || name == MEDIA_CHANGE) {
             this.mediaSize = state.ui.media.size;
             this.hidden = true;
-            const isCurrentScreen = ["cierre"].includes(state.screen.name);
+            const isCurrentScreen = ["listaCierre"].includes(state.screen.name);
             if (isInLayout(state, this.area) && isCurrentScreen) {
                 this.opciones = this.shadowRoot.querySelector("#opciones");
                 this.hidden = false;
@@ -478,4 +483,4 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
         };
     }
 }
-window.customElements.define("cierre-component", cierre);
+window.customElements.define("lista-cierre-component", listaCierre);

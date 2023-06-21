@@ -27,3 +27,4 @@ export const ordenesSinCerrarteFetch = fetchFactory(webApiOrdenesMedicas, "Orden
 
 export const motivosAnulacionAllFetch = fetchFactory(webApiOrdenesMedicas, "MotivosAnulacion/getAll");
 export const cerrarCajaFetch = fetchFactory(webApiOrdenesMedicas, "Cierres/CerrarCaja");
+export const listarCierreFetch = fetchFactory(webApiOrdenesMedicas, "OrdenesMedicas/listarCierre");

@@ -16,6 +16,10 @@ export const BONOS_SIN_CERRAR = "[OrdenMedica] bonos sin cerrar";
 export const BONOS_SIN_CERRAR_SUCCESS = "[OrdenMedica] bonos sin cerrar success";
 export const BONOS_SIN_CERRAR_ERROR = "[OrdenMedica] bonos sin cerrar error";
 
+export const LISTAR_CIERRE = "[OrdenMedica] cerrar";
+export const LISTAR_CIERRE_SUCCESS = "[OrdenMedica] cerrar success";
+export const LISTAR_CIERRE_ERROR = "[OrdenMedica] cerrar error";
+
 export const pendientesXCaja = () => ({
     type: PENDIENTES_X_CAJA,
 });
@@ -32,4 +36,9 @@ export const pagadosXExpediente = (expediente) => ({
 
 export const bonosSinCerrar = () => ({
     type: BONOS_SIN_CERRAR,
+});
+
+export const listarCierre = (nroCierre) => ({
+    type: LISTAR_CIERRE,
+    nroCierre: nroCierre,
 });
