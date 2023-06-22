@@ -22,10 +22,9 @@ import { cerrarCaja } from "../../redux/cierre/actions";
 const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
 
-const PENDIENTES = "ordenMedica.bonosSinCerrarTimeStamp";
-const CIERRE_TS = "cierre.cierreTimeStamp";
+const CIERRE_TS = "ordenMedica.listaCierreTimeStamp";
 
-export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIERRE_TS)(LitElement) {
+export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -323,18 +322,6 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES
                         </div>`;
                     })}
                 </div>
-
-                <!-- <dialog class="resumen" id="dialogo">
-                    <div class="grid column titulo-resumen">
-                        <div class="justify-self-center">Se ha generado el cierre Nro: ${this.nroCierre}</div>
-                        <div @click=${this.cerrar} class="boton-cerrar justify-self-end">X</div>
-                    </div>
-
-                    <button raised etiqueta round @click="${this.imprimir}">
-                        <div>${PRINT}</div>
-                        <div class="justify-self-start">IMPRIMIR</div>
-                    </button>
-                </dialog> -->
             </div>
 
             <div class="footer">
@@ -440,10 +427,10 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES
             this.update();
         }
 
-        if (name == PENDIENTES) {
-            if (state.ordenMedica.bonosSinCerrar) {
-                this.items = state.ordenMedica.bonosSinCerrar.movimientos;
-                this.resumen = state.ordenMedica.bonosSinCerrar.resumen;
+        if (name == CIERRE_TS) {
+            if (state.ordenMedica.listaCierre) {
+                this.items = state.ordenMedica.listaCierre.movimientos;
+                this.resumen = state.ordenMedica.listaCierre.resumen;
                 this.movimientos = this.resumen.movimientos;
                 this.excepcion = this.resumen.excepcion;
                 this.recaudacion = this.resumen.recaudacion;
@@ -454,13 +441,6 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES
             this.totales = this.items.reduce((acum, item) => {
                 return !acum[item.tipoPago] ? { ...acum, [item.tipoPago]: item.importeCaja } : { ...acum, [item.tipoPago]: acum[item.tipoPago] + item.importeCaja };
             }, {});
-            this.update();
-        }
-
-        if (name == CIERRE_TS) {
-            this.nroCierre = state.cierre.cierre;
-            const dialogo = this.shadowRoot.querySelector("#dialogo");
-            dialogo.showModal();
             this.update();
         }
     }

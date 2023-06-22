@@ -19,6 +19,8 @@ import {
     BONOS_SIN_CERRAR_SUCCESS,
     BONOS_SIN_CERRAR_ERROR,
     LISTAR_CIERRE,
+    LISTAR_CIERRE_SUCCESS,
+    LISTAR_CIERRE_ERROR,
 } from "./actions";
 
 export const pendietesXCaja =
@@ -88,7 +90,7 @@ export const listaCierre =
         next(action);
         if (action.type === LISTAR_CIERRE) {
             if (localStorage.getItem("caja") != undefined) {
-                dispatch(RESTRequest(listarCierreFetch, action.nroCierre + "/" + localStorage.getItem("caja"), BONOS_SIN_CERRAR_SUCCESS, BONOS_SIN_CERRAR_ERROR));
+                dispatch(RESTRequest(listarCierreFetch, action.nroCierre + "/" + localStorage.getItem("caja"), LISTAR_CIERRE_SUCCESS, LISTAR_CIERRE_ERROR));
                 dispatch(blanquearMensaje());
             } else {
                 dispatch(noticarCajaVacia());

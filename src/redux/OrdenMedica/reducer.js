@@ -9,6 +9,8 @@ import {
     PAGADOS_X_NUMERO_ERROR,
     BONOS_SIN_CERRAR_ERROR,
     BONOS_SIN_CERRAR_SUCCESS,
+    LISTAR_CIERRE_ERROR,
+    LISTAR_CIERRE_SUCCESS,
 } from "./actions";
 import { store } from "../store";
 
@@ -20,6 +22,9 @@ const initialState = {
     errorTimeStamp: null,
     bonosSinCerrar: null,
     bonosSinCerrarTimeStamp: null,
+    errorTimeStampListar: null,
+    listaCierre: null,
+    listaCierreTimeStamp: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -47,6 +52,13 @@ export const reducer = (state = initialState, action) => {
         case PAGADOS_X_NUMERO_ERROR:
         case BONOS_SIN_CERRAR_ERROR:
             newState.errorTimeStamp = new Date().getTime();
+            break;
+        case LISTAR_CIERRE_SUCCESS:
+            newState.listaCierre = action.payload.receive;
+            newState.listaCierreTimeStamp = new Date().getTime();
+            break;
+        case LISTAR_CIERRE_ERROR:
+            newState.errorTimeStampListar = new Date().getTime();
             break;
     }
     return newState;
