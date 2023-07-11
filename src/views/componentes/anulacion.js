@@ -26,7 +26,7 @@ const SCREEN = "screen.timeStamp";
 const MOTIVOS_ANULACION = "motivosAnulacion.timeStamp";
 const DEVOLUCION_RECIBIDA = "ui.devolucionRecibidaTimeStamp";
 const DEVOLUCION_RECIBIDA_EF = "ui.devolucionEfRecibidaTimeStamp";
-const ERROR_TS = "ordenMedica.errorTimeStamp";
+const ERROR_TS = "ordenMedica.errorPagadosTimeStamp";
 export class anulacion extends connect(store, SCREEN, MEDIA_CHANGE, ORDENES, MOTIVOS_ANULACION, DEVOLUCION_RECIBIDA, DEVOLUCION_RECIBIDA_EF, ERROR_TS)(LitElement) {
     constructor() {
         super();

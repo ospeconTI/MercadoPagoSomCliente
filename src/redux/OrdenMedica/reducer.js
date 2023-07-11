@@ -25,6 +25,7 @@ const initialState = {
     errorTimeStampListar: null,
     listaCierre: null,
     listaCierreTimeStamp: null,
+    errorPagadosTimeStamp: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -50,6 +51,8 @@ export const reducer = (state = initialState, action) => {
             break;
         case PAGADOS_X_EXPEDIENTE_ERROR:
         case PAGADOS_X_NUMERO_ERROR:
+            newState.errorPagadosTimeStamp = new Date().getTime();
+            break;
         case BONOS_SIN_CERRAR_ERROR:
             newState.errorTimeStamp = new Date().getTime();
             break;

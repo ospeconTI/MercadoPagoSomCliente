@@ -389,8 +389,12 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
     }
 
     cerrarCaja() {
-        if (confirm("Va a realizar el Cierre de la Caja. Está Seguro")) {
-            store.dispatch(cerrarCaja());
+        if (this.items.length > 0) {
+            if (confirm("Va a realizar el Cierre de la Caja. Está Seguro")) {
+                store.dispatch(cerrarCaja());
+            }
+        } else {
+            alert("No Hay Movimientos para cerrar");
         }
     }
 
