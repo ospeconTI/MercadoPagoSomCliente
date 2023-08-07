@@ -16,9 +16,13 @@ export const BONOS_SIN_CERRAR = "[OrdenMedica] bonos sin cerrar";
 export const BONOS_SIN_CERRAR_SUCCESS = "[OrdenMedica] bonos sin cerrar success";
 export const BONOS_SIN_CERRAR_ERROR = "[OrdenMedica] bonos sin cerrar error";
 
-export const LISTAR_CIERRE = "[OrdenMedica] cerrar";
-export const LISTAR_CIERRE_SUCCESS = "[OrdenMedica] cerrar success";
-export const LISTAR_CIERRE_ERROR = "[OrdenMedica] cerrar error";
+export const LISTAR_CIERRE = "[OrdenMedica] listar cierre";
+export const LISTAR_CIERRE_SUCCESS = "[OrdenMedica] listar cierre success";
+export const LISTAR_CIERRE_ERROR = "[OrdenMedica] listar cierre error";
+
+export const IMPRIMIR_CIERRE = "[OrdenMedica] imprimir cierre";
+export const IMPRIMIR_CIERRE_SUCCESS = "[OrdenMedica] imprimir cierre success";
+export const IMPRIMIR_CIERRE_ERROR = "[OrdenMedica] imprimir cierre error";
 
 export const pendientesXCaja = () => ({
     type: PENDIENTES_X_CAJA,
@@ -40,5 +44,10 @@ export const bonosSinCerrar = () => ({
 
 export const listarCierre = (nroCierre) => ({
     type: LISTAR_CIERRE,
+    nroCierre: nroCierre,
+});
+
+export const imprimirCierre = (nroCierre) => ({
+    type: IMPRIMIR_CIERRE,
     nroCierre: nroCierre,
 });

@@ -18,6 +18,8 @@ import { listarCierre, pendientesXCaja } from "../../redux/OrdenMedica/actions";
 import { recibirPago } from "../../redux/MercadoPago/actions";
 import { isInLayout } from "../../redux/screens/screenLayouts";
 import { cerrarCaja } from "../../redux/cierre/actions";
+import { jsPDF } from "jspdf";
+import { getPDFCierre } from "./impresion";
 
 const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
@@ -89,16 +91,18 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 align-items: center;
                 align-content: center;
             }
+
             .spinner-container {
                 position: relative;
                 color: var(--on-formulario);
             }
+
             .filtro {
                 display: grid;
                 gap: 3rem;
                 padding: 2rem;
                 background-color: var(--formulario);
-                grid-template-columns: 1fr 2fr 1fr;
+                grid-template-columns: 1fr 2fr 1fr 1fr;
             }
             .grilla {
                 background-color: var(--formulario);
@@ -285,12 +289,16 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                     <label error>No puede ser vacio</label>
                     <label subtext>Requerido</label>
                 </div>
-                <button class="justify-self-end" raised etiqueta round @click="${this.imprimir}">
+                <button class="justify-self-end" raised etiqueta round @click="${this.listar}">
                     <div>${CIERRE}</div>
                     <div class="justify-self-start">Listar</div>
                 </button>
+                <button class="justify-self-end" raised etiqueta round @click="${this.imprimir}">
+                    <div>${PRINT}</div>
+                    <div class="justify-self-start">Imprimir</div>
+                </button>
             </div>
-            <div class="grid grilla">
+            <div class="grid grilla" id="grillaPDF">
                 <div class="grid cabecera-grilla">
                     <div class="orden" .ordenax=${"paciente_Nombre"} @click=${this.ordenar}>Apellido y Nombre</div>
                     <div class="orden" .ordenax=${"paciente_Documento"} @click=${this.ordenar}>DNI</div>
@@ -329,15 +337,15 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                     <div class="tituloItems grid">TOTALES</div>
                     <div class="totales">
                         <div class="grid">Total General:</div>
-                        <div class="grid justify-self-start">${this.resumen.importeTotal ? this.resumen.importeTotal : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.importeTotal ? this.resumen.importeTotal : 0}</div>
                     </div>
                     <div class="totales">
                         <div class="grid">Efectivo:</div>
-                        <div class="grid justify-self-start">${this.resumen.efectivo ? this.resumen.efectivo : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.efectivo ? this.resumen.efectivo : 0}</div>
                     </div>
                     <div class="totales">
                         <div class="grid">Billetera:</div>
-                        <div class="grid justify-self-start">${this.resumen.billetera ? this.resumen.billetera : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.billetera ? this.resumen.billetera : 0}</div>
                     </div>
                 </div>
 
@@ -382,6 +390,121 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
     }
 
     imprimir() {
+        const nroCierre = this.shadowRoot.querySelector("#nro").value;
+        const doc = getPDFCierre(store.getState().ordenMedica.listaCierre, nroCierre);
+        doc.save("Cierre" + nroCierre);
+        /*        const doc = new jsPDF({ unit: "mm" });
+
+        const hoy = new Date();
+
+        doc.setFontSize(7);
+        doc.text("Fecha: " + hoy.getDate().toString() + "/" + hoy.getMonth() + 1 + "/" + hoy.getFullYear().toString(), 10, 5);
+        doc.setFontSize(14);
+        doc.setFont("Helvetica", "normal", "bold");
+        const ancho = doc.internal.pageSize.getWidth() / 2;
+        doc.text("Listado de Cierre Nro " + nroCierre, ancho, 15, { align: "center" });
+        const fuentes = doc.getFontList();
+        doc.setFontSize(8);
+
+        let fila = 40;
+        let columna = 25;
+        const gap = 7;
+
+        const bono = 25;
+        const mov = 3;
+        const fecha = 10;
+        const dni = 8;
+        const importe = 19;
+        const forma = 3;
+        const recauda = 1;
+
+        doc.text("Nro Bono", columna, fila);
+        columna += bono + gap;
+        doc.text("MOV", columna, fila);
+        columna += mov + gap;
+        doc.text("Fecha", columna, fila);
+        columna += fecha + gap;
+        doc.text("DNI", columna, fila);
+        columna += dni + gap;
+        doc.text("Importe", columna, fila);
+        columna += importe + gap;
+        doc.text("FP", columna, fila);
+        columna += forma + gap;
+        doc.text("Recauda", columna, fila);
+        columna += recauda + gap;
+        doc.setFont("Helvetica", "normal", "normal");
+        this.items.forEach((item) => {
+            fila += 5;
+            columna = 25;
+            doc.text(item.numero.substring(5, 15) + "/" + "19401290", columna, fila);
+            columna += bono + gap;
+            doc.text(item.movimiento, columna, fila);
+            columna += mov + gap;
+            const sfecha = new Date(item.fecha);
+            doc.text(sfecha.getDate() + "/" + (sfecha.getMonth() + 1).toString() + "/" + sfecha.getFullYear(), columna, fila);
+            columna += fecha + gap;
+            doc.text(item.paciente_Documento.toString(), columna, fila);
+            columna += dni + gap;
+            doc.text(item.importeCaja.toFixed(2), columna, fila, { align: "left" });
+            columna += importe + gap;
+            doc.text(item.tipoPago, columna, fila);
+            columna += forma + gap;
+            doc.text(item.recauda, columna, fila);
+            columna += recauda + gap;
+        });
+        fila += 15;
+        doc.setFont("Helvetica", "normal", "bold");
+        doc.text("Movimientos Exencion", 5, fila);
+        doc.setFont("Helvetica", "normal", "normal");
+        fila += 5;
+        this.excepcion.forEach((item) => {
+            doc.text(item.id, 5, fila);
+            doc.text(item.cantidad.toString(), 40, fila);
+        });
+
+        fila += 15;
+        doc.setFont("Helvetica", "normal", "bold");
+        doc.text("Movimientos Coseguro", 5, fila);
+        doc.setFont("Helvetica", "normal", "normal");
+
+        this.movimientos.forEach((item) => {
+            fila += 5;
+            doc.text(item.id, 5, fila);
+            doc.text(item.cantidad.toString(), 40, fila);
+            doc.text(item.importe.toFixed(2), 60, fila, { align: "right" });
+        });
+
+        fila += 15;
+        doc.setFont("Helvetica", "normal", "bold");
+        doc.text("Movimientos Recaudación", 5, fila);
+        doc.setFont("Helvetica", "normal", "normal");
+
+        this.recaudacion.forEach((item) => {
+            fila += 5;
+            doc.text(item.id, 5, fila);
+            doc.text(item.cantidad.toString(), 40, fila);
+            doc.text(item.importe.toFixed(2), 60, fila, { align: "right" });
+        });
+
+        fila += 15;
+        doc.setFont("Helvetica", "normal", "bold");
+        doc.text("TOTALES", 5, fila);
+        doc.setFont("Helvetica", "normal", "normal");
+
+        fila += 5;
+        doc.text("Importe Total:", 5, fila);
+
+        doc.text(this.resumen.importeTotal.toFixed(2), 60, fila, { align: "right" });
+        fila += 5;
+        doc.text("Importe Efectivo", 5, fila);
+
+        doc.text(this.resumen.efectivo.toFixed(2), 60, fila, { align: "right" });
+        fila += 5;
+        doc.text("Importe Billetera", 5, fila);
+        doc.text(this.resumen.billetera.toFixed(2), 60, fila, { align: "right" }); */
+    }
+
+    listar() {
         const nroCierre = this.shadowRoot.querySelector("#nro").value;
         store.dispatch(listarCierre(nroCierre));
     }

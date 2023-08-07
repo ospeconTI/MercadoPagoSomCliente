@@ -1,5 +1,6 @@
 /** @format */
 
+import { getPDFCierre } from "../../views/componentes/impresion";
 import { noticarCajaVacia } from "../caja/actions";
 import { listarCierreFetch, ordenesSinCerrarteFetch, ordenxExpedienteFetch, ordenxNumeroFetch, pendietesPorCaja } from "../fetchs";
 import { RESTRequest } from "../rest/actions";
@@ -21,6 +22,9 @@ import {
     LISTAR_CIERRE,
     LISTAR_CIERRE_SUCCESS,
     LISTAR_CIERRE_ERROR,
+    IMPRIMIR_CIERRE,
+    IMPRIMIR_CIERRE_SUCCESS,
+    IMPRIMIR_CIERRE_ERROR,
 } from "./actions";
 
 export const pendietesXCaja =
@@ -97,4 +101,20 @@ export const listaCierre =
             }
         }
     };
-export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente, ordenesSinCerrar, listaCierre];
+
+export const impresionCierre =
+    ({ dispatch }) =>
+    (next) =>
+    (action) => {
+        next(action);
+        if (action.type === IMPRIMIR_CIERRE) {
+            if (localStorage.getItem("caja") != undefined) {
+                dispatch(RESTRequest(listarCierreFetch, action.nroCierre + "/" + localStorage.getItem("caja"), IMPRIMIR_CIERRE_SUCCESS, IMPRIMIR_CIERRE_ERROR));
+                dispatch(blanquearMensaje());
+            } else {
+                dispatch(noticarCajaVacia());
+            }
+        }
+    };
+
+export const middleware = [pendietesXCaja, pagadosXnumero, pagadosXexpediente, ordenesSinCerrar, listaCierre, impresionCierre];

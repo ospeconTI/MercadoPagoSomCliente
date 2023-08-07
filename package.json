@@ -22,6 +22,7 @@
         "@material-ui/icons": "^4.11.2",
         "css-loader": "^3.4.1",
         "file-loader": "^5.0.2",
+        "jspdf": "^2.5.1",
         "lit": "^2.0.2",
         "redux": "^4.0.5",
         "redux-logger": "^3.0.6",

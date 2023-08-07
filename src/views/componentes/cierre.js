@@ -3,7 +3,7 @@
 import { html, LitElement, css } from "lit";
 import { store } from "../../redux/store";
 import { connect, deepValue } from "@brunomon/helpers";
-import { OK, PAGAR, PERSON, QR, REFRESH, SEARCH, CIERRE, PRINT } from "../../../assets/icons/svgs";
+import { OK, PAGAR, PERSON, QR, REFRESH, SEARCH, CIERRE, PRINT, LISTA } from "../../../assets/icons/svgs";
 import { gridLayout } from "@brunomon/template-lit/src/views/css/gridLayout";
 import { input } from "@brunomon/template-lit/src/views/css/input";
 import { select } from "@brunomon/template-lit/src/views/css/select";
@@ -14,18 +14,20 @@ import { AlertControl } from "./alert";
 import { ConfirmControl } from "./confirm";
 import { showAlert, showConfirm } from "../../redux/ui/actions";
 import { showSpinner } from "../../redux/api/actions";
-import { pendientesXCaja } from "../../redux/OrdenMedica/actions";
+import { imprimirCierre, listarCierre, pendientesXCaja } from "../../redux/OrdenMedica/actions";
 import { recibirPago } from "../../redux/MercadoPago/actions";
 import { isInLayout } from "../../redux/screens/screenLayouts";
 import { cerrarCaja } from "../../redux/cierre/actions";
+//import { impresionCierre } from "./impresion";
 
 const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
+const LISTADO = "ordenMedica.listaCierreTimeStamp";
 
 const PENDIENTES = "ordenMedica.bonosSinCerrarTimeStamp";
 const CIERRE_TS = "cierre.cierreTimeStamp";
 
-export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIERRE_TS)(LitElement) {
+export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIERRE_TS, LISTADO)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -195,6 +197,14 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 align-self: start;
             }
 
+            .resumen2 {
+                grid-template-columns: 3fr 1fr;
+            }
+
+            .resumen3 {
+                grid-template-columns: 3fr 1fr 2fr;
+            }
+
             .boton-cerrar {
                 cursor: pointer;
                 padding: 1rem;
@@ -336,25 +346,25 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                     <div class="tituloItems grid">TOTALES</div>
                     <div class="totales">
                         <div class="grid">Total General:</div>
-                        <div class="grid justify-self-start">${this.resumen.importeTotal ? this.resumen.importeTotal : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.importeTotal ? this.resumen.importeTotal : 0}</div>
                     </div>
                     <div class="totales">
                         <div class="grid">Efectivo:</div>
-                        <div class="grid justify-self-start">${this.resumen.efectivo ? this.resumen.efectivo : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.efectivo ? this.resumen.efectivo : 0}</div>
                     </div>
                     <div class="totales">
                         <div class="grid">Billetera:</div>
-                        <div class="grid justify-self-start">${this.resumen.billetera ? this.resumen.billetera : 0}</div>
+                        <div class="grid justify-self-end">${this.resumen.billetera ? this.resumen.billetera : 0}</div>
                     </div>
                 </div>
 
                 <div class="footer-col">
                     <div class="tituloItems grid">MOVIMIENTOS</div>
                     ${this.movimientos.map((item) => {
-                        return html` <div class="grid column">
-                            <div>${item.id}</div>
-                            <div>${item.cantidad}</div>
-                            <div>${item.importe}</div>
+                        return html` <div class="grid resumen3">
+                            <div class="grid">${item.id}</div>
+                            <div class="grid justify-self-end">${item.cantidad}</div>
+                            <div class="grid justify-self-end">${item.importe}</div>
                         </div>`;
                     })}
                 </div>
@@ -362,9 +372,9 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 <div class="footer-col">
                     <div class="tituloItems grid">EXCEPCION</div>
                     ${this.excepcion.map((item) => {
-                        return html` <div class="grid column">
-                            <div>${item.id}</div>
-                            <div>${item.cantidad}</div>
+                        return html` <div class="grid resumen2">
+                            <div class="grid">${item.id}</div>
+                            <div class="grid justify-self-end">${item.cantidad}</div>
                         </div>`;
                     })}
                 </div>
@@ -372,10 +382,10 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
                 <div class="footer-col">
                     <div class="tituloItems grid">RECAUDACION</div>
                     ${this.recaudacion.map((item) => {
-                        return html` <div class="grid column">
-                            <div>${item.id}</div>
-                            <div>${item.cantidad}</div>
-                            <div>${item.importe}</div>
+                        return html` <div class="grid resumen3">
+                            <div class="grid">${item.id}</div>
+                            <div class="grid justify-self-end">${item.cantidad}</div>
+                            <div class="grid justify-self-end">${item.importe}</div>
                         </div>`;
                     })}
                 </div>
@@ -427,6 +437,11 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
         this.requestUpdate();
     }
 
+    imprimir() {
+        //store.dispatch(listarCierre(this.nroCierre));
+        store.dispatch(imprimirCierre(this.nroCierre));
+    }
+
     stateChanged(state, name) {
         if (name == SCREEN || name == MEDIA_CHANGE) {
             this.mediaSize = state.ui.media.size;
@@ -461,6 +476,13 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
             const dialogo = this.shadowRoot.querySelector("#dialogo");
             dialogo.showModal();
             this.update();
+        }
+
+        if (name == LISTADO) {
+            const isCurrentScreen = ["cierre"].includes(state.screen.name);
+            if (state.ordenMedica.listaCierre && isCurrentScreen) {
+                impresionCierre();
+            }
         }
     }
 

@@ -273,7 +273,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
                             <div>${item.especialidad}</div>
                             <div>${item.numero}</div>
                             <div>${item.expediente}</div>
-                            <div>$ ${item.importeCaja.toFixed(2)}</div>
+                            <div>$ ${item.recauda == "S" ? item.importeCaja.toFixed(2) : 0}</div>
                             <div class="check">
                                 <input id="c1" type="checkbox" @click="${this.sumar}" .item=${item} />
                                 <label for="c1">Sumar</label>
