@@ -400,8 +400,14 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
 
     cerrarCaja() {
         if (this.items.length > 0) {
-            if (confirm("Va a realizar el Cierre de la Caja. Está Seguro")) {
-                store.dispatch(cerrarCaja());
+            const sinCobro = this.items.find((element) => element.tipoPago == null);
+            if (!sinCobro) {
+                if (confirm("Va a realizar el Cierre de la Caja. Está Seguro")) {
+                    store.dispatch(cerrarCaja());
+                }
+            } else {
+                alert("Hay bonos sin registrar el pago");
+                return false;
             }
         } else {
             alert("No Hay Movimientos para cerrar");
@@ -440,6 +446,7 @@ export class cierre extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, CIE
     imprimir() {
         //store.dispatch(listarCierre(this.nroCierre));
         store.dispatch(imprimirCierre(this.nroCierre));
+        this.cerrar();
     }
 
     stateChanged(state, name) {

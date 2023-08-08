@@ -25,7 +25,7 @@ module.exports = merge(common, {
         }),
         new webpack.DefinePlugin({
             SERVICE_URL: JSON.stringify("https://www.uocra.net/intranet/promocionsocial/MotivosCategorias"),
-            OM_SERVICE_URL: JSON.stringify("http://localhost:5028"),
+            OM_SERVICE_URL: JSON.stringify("https://MPSOM.uocra.net"),
         }),
     ],
 });

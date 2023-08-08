@@ -68,7 +68,8 @@ export const reducer = (state = initialState, action) => {
             newState.errorTimeStampListar = new Date().getTime();
             break;
         case IMPRIMIR_CIERRE_SUCCESS:
-            const doc = getPDFCierre(action.payload.receive, action.nroCierre);
+            const nroCierre = action.payload.receive.nroCierre;
+            const doc = getPDFCierre(action.payload.receive, nroCierre);
             doc.save("Cierre " + nroCierre.toString());
     }
     return newState;

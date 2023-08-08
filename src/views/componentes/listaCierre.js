@@ -198,6 +198,14 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 align-self: start;
             }
 
+            .resumen2 {
+                grid-template-columns: 3fr 1fr;
+            }
+
+            .resumen3 {
+                grid-template-columns: 3fr 1fr 2fr;
+            }
+
             .boton-cerrar {
                 cursor: pointer;
                 padding: 1rem;
@@ -352,7 +360,7 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 <div class="footer-col">
                     <div class="tituloItems grid">MOVIMIENTOS</div>
                     ${this.movimientos.map((item) => {
-                        return html` <div class="grid column">
+                        return html` <div class="grid resumen3">
                             <div>${item.id}</div>
                             <div>${item.cantidad}</div>
                             <div>${item.importe}</div>
@@ -363,7 +371,7 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 <div class="footer-col">
                     <div class="tituloItems grid">EXCEPCION</div>
                     ${this.excepcion.map((item) => {
-                        return html` <div class="grid totales">
+                        return html` <div class="grid resumen2">
                             <div>${item.id}</div>
                             <div>${item.cantidad}</div>
                         </div>`;
@@ -373,7 +381,7 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 <div class="footer-col">
                     <div class="tituloItems grid">RECAUDACION</div>
                     ${this.recaudacion.map((item) => {
-                        return html` <div class="grid column">
+                        return html` <div class="grid resumen3">
                             <div>${item.id}</div>
                             <div>${item.cantidad}</div>
                             <div>${item.importe}</div>
