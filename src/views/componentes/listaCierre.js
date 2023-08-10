@@ -25,8 +25,9 @@ const MEDIA_CHANGE = "ui.media.timeStamp";
 const SCREEN = "screen.timeStamp";
 
 const CIERRE_TS = "ordenMedica.listaCierreTimeStamp";
+const CIERRE_ERROR_TS = "ordenMedica.errorTimeStampListar";
 
-export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)(LitElement) {
+export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS, CIERRE_ERROR_TS)(LitElement) {
     constructor() {
         super();
         this.items = [];
@@ -573,6 +574,10 @@ export class listaCierre extends connect(store, MEDIA_CHANGE, SCREEN, CIERRE_TS)
                 return !acum[item.tipoPago] ? { ...acum, [item.tipoPago]: item.importeCaja } : { ...acum, [item.tipoPago]: acum[item.tipoPago] + item.importeCaja };
             }, {});
             this.update();
+        }
+
+        if (name == CIERRE_ERROR_TS) {
+            alert("No existe el Número de Cierre");
         }
     }
 

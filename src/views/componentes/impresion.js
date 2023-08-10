@@ -49,11 +49,14 @@ export const getPDFCierre = (listado, nroCierre) => {
     items.forEach((item) => {
         fila += 5;
         columna = 25;
-        doc.text(item.numero.substring(5, 15) + "/" + "19401290", columna, fila);
+        const nroBono = item.numero.substring(5, 15);
+        const expediente = item.expediente == "" ? item.expediente : "/" + item.expediente;
+        doc.text(nroBono + expediente, columna, fila);
         columna += bono + gap;
         doc.text(item.movimiento, columna, fila);
         columna += mov + gap;
         const sfecha = new Date(item.fecha);
+
         doc.text(sfecha.getDate() + "/" + (sfecha.getMonth() + 1).toString() + "/" + sfecha.getFullYear(), columna, fila);
         columna += fecha + gap;
         doc.text(item.paciente_Documento.toString(), columna, fila);
@@ -65,6 +68,7 @@ export const getPDFCierre = (listado, nroCierre) => {
         doc.text(item.recauda, columna, fila);
         columna += recauda + gap;
     });
+
     fila += 15;
     doc.setFont("Helvetica", "normal", "bold");
     doc.text("Movimientos Exencion", 5, fila);
