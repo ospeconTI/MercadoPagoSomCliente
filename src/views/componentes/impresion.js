@@ -75,6 +75,7 @@ export const getPDFCierre = (listado, nroCierre) => {
     doc.setFont("Helvetica", "normal", "normal");
     fila += 5;
     excepcion.forEach((item) => {
+        fila += 5;
         doc.text(item.id, 5, fila);
         doc.text(item.cantidad.toString(), 40, fila);
     });
