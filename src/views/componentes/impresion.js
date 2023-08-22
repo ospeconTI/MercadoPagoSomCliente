@@ -19,7 +19,7 @@ export const getPDFCierre = (listado, nroCierre) => {
     const fuentes = doc.getFontList();
     doc.setFontSize(8);
 
-    let fila = 40;
+    let fila = 30;
     let columna = 25;
     const gap = 7;
 

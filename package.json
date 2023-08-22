@@ -1,6 +1,6 @@
 {
     "name": "pagos-som",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "description": "Pago de Ordenes Medicas",
     "main": "./src/index.js",
     "scripts": {
