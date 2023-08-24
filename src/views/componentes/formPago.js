@@ -450,7 +450,7 @@ export class formPago extends connect(store, MEDIA_CHANGE, SCREEN, PENDIENTES, P
             mercadoPago: this.importeMP,
             efectivo: this.efectivo,
             caja: localStorage.getItem("caja"),
-            storeId: "P0002",
+            storeId: "",
         };
         this.body.ordenes = this.ordenes;
         const resumen = this.shadowRoot.querySelector("#resumen");

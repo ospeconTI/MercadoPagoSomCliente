@@ -44,15 +44,12 @@
         {
             "label": "publish-test",
             "type": "shell",
-            "command": "copy dist/* //uocradevnet/wwwroot/IntegracionOS"
+            "command": "copy dist/* //uocradevnet/wwwroot/MercadoPagoSOM"
         },
         {
             "label": "Distribucion Patch",
             "dependsOrder": "sequence",
-            "dependsOn": [
-                "version-patch",
-                "build"
-            ],
+            "dependsOn": ["version-patch", "build"],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -62,28 +59,19 @@
         {
             "label": "Distribucion Minor",
             "dependsOrder": "sequence",
-            "dependsOn": [
-                "version-minor",
-                "build"
-            ],
+            "dependsOn": ["version-minor", "build"],
             "problemMatcher": []
         },
         {
             "label": "Distribucion Major",
             "dependsOrder": "sequence",
-            "dependsOn": [
-                "version-major",
-                "build"
-            ],
+            "dependsOn": ["version-major", "build"],
             "problemMatcher": []
         },
         {
             "label": "Distribucion Test",
             "dependsOrder": "sequence",
-            "dependsOn": [
-                "build-test",
-                "publish-test"
-            ],
+            "dependsOn": ["build-test", "publish-test"],
             "problemMatcher": []
         }
     ]
