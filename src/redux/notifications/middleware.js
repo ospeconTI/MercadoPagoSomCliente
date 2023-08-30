@@ -27,7 +27,7 @@ export const connect =
     (action) => {
         next(action);
         if (action.type === CONNECT) {
-            WebSocketNotificaciones(dispatch, "wss://wstest.uocra.net/?IdCaja=" + action.idCaja, null, actionOnOpen, actionOnMessage, actionOnError, actionOnClose);
+            WebSocketNotificaciones(dispatch, WS_SERVICE_URL + "/?IdCaja=" + action.idCaja, null, actionOnOpen, actionOnMessage, actionOnError, actionOnClose);
         }
     };
 export const onOpen =

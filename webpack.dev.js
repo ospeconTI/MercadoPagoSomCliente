@@ -22,6 +22,7 @@ module.exports = merge(common, {
         new webpack.DefinePlugin({
             SERVICE_URL: JSON.stringify("http://localhost/promocionsocial"),
             OM_SERVICE_URL: JSON.stringify("http://localhost:5028"),
+            WS_SERVICE_URL: JSON.stringify("wss://wstest.uocra.net"),
         }),
     ],
 });
