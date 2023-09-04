@@ -12,6 +12,8 @@ import {
     LISTAR_CIERRE_ERROR,
     LISTAR_CIERRE_SUCCESS,
     IMPRIMIR_CIERRE_SUCCESS,
+    RESUMEN_CIERRE_ERROR,
+    RESUMEN_CIERRE_SUCCESS,
 } from "./actions";
 import { store } from "../store";
 import { getPDFCierre } from "../../views/componentes/impresion";
@@ -30,6 +32,9 @@ const initialState = {
     errorPagadosTimeStamp: null,
     imprimirCierre: null,
     imprimirCierreTimeStamp: null,
+    resumenCierre: null,
+    resumenCierreTimeStamp: null,
+    errorTimeStampResumen: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -71,6 +76,14 @@ export const reducer = (state = initialState, action) => {
             const nroCierre = action.payload.receive.nroCierre;
             const doc = getPDFCierre(action.payload.receive, nroCierre);
             doc.save("Cierre " + nroCierre.toString());
+            break;
+        case RESUMEN_CIERRE_SUCCESS:
+            newState.resumenCierre = action.payload.receive;
+            newState.resumenCierreTimeStamp = new Date().getTime();
+            break;
+        case RESUMEN_CIERRE_ERROR:
+            newState.errorTimeStampResumen = new Date().getTime();
+            break;
     }
     return newState;
 };

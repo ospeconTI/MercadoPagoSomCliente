@@ -37,6 +37,7 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
         this.selectedOption = new Array(this.optionsCount).fill(false);
         this.selectedOption[this.defaultOption] = true;
         this.caja = "";
+        this.cemap = "";
         this.formularioCajaVisible = false;
 
         const gestures = new gesturesController(this, this.gestos);
@@ -217,6 +218,10 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                     <div>${LISTA}</div>
                     <div class="justify-self-start">Consulta Cierres</div>
                 </button>
+                <button link etiqueta ?selected="${this.selectedOption[4]}" @click=${this.click} .option=${"resumenCierre"}>
+                    <div>${LISTA}</div>
+                    <div class="justify-self-start">Resumen Cierres</div>
+                </button>
 
                 <!--  <button link etiqueta ?selected="${this.selectedOption[3]}" @click=${this.click} .option=${"opcion3"}>
                     <div>${PERSON}</div>
@@ -230,7 +235,10 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
                     <input id="caja" .value="${this.caja}" />
                     <label for="caja">Código de Caja</label>
                 </div>
-
+                <div class="input">
+                    <input id="cemap" .value="${this.cemap}" />
+                    <label for="cemap">CeMAP</label>
+                </div>
                 <button raised etiqueta round id="gabarCaja" @click=${this.guardarCaja}>
                     ${OK}
                     <div class="justify-self-start">Guardar</div>
@@ -292,12 +300,15 @@ export class menuPrincipal extends connect(store, MEDIA_CHANGE, SCREEN, USUARIO,
 
         this.formularioCajaVisible = !this.formularioCajaVisible;
         this.caja = localStorage.getItem("caja");
+        this.cemap = localStorage.getItem("cemap");
         this.update();
     }
 
     guardarCaja(e) {
         const caja = this.shadowRoot.querySelector("#caja").value;
+        const cemap = this.shadowRoot.querySelector("#cemap").value;
         localStorage.setItem("caja", caja);
+        localStorage.setItem("cemap", cemap);
         store.dispatch(pendientesXCaja());
         this.formularioCajaVisible = false;
     }

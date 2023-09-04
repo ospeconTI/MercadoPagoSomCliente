@@ -9,6 +9,7 @@ export const setCaja =
         next(action);
         if (action.type === SET) {
             localStorage.setItem("caja", action.caja);
+            localStorage.setItem("cemap", action.cemap);
             dispatch({ type: SET_SUCCESS, caja: action.caja });
         }
     };
@@ -20,7 +21,8 @@ export const getCaja =
         next(action);
         if (action.type === GET) {
             action.caja = localStorage.getItem("caja");
-            dispatch({ type: GET_SUCCESS, caja: action.caja });
+            action.cemap = localStorage.getItem("cemap");
+            dispatch({ type: GET_SUCCESS, caja: action.caja, cemap: action.cemap });
         }
     };
 

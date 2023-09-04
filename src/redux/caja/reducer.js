@@ -8,6 +8,7 @@ const initialState = {
     setCajaTimeStamp: null,
     getCajaTimeStamp: null,
     cajaVaciaTimeStamp: null,
+    cemap: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -18,10 +19,12 @@ export const reducer = (state = initialState, action) => {
         case SET_SUCCESS:
             newState.setCajaTimeStamp = new Date().getTime();
             newState.caja = action.caja;
+            newState.cemap = action.cemap;
             break;
         case GET_SUCCESS:
             newState.getCajaTimeStamp = new Date().getTime();
             newState.caja = action.caja;
+            newState.cemap = action.cemap;
             break;
         case NOTIFICAR_VACIA:
             newState.cajaVaciaTimeStamp = new Date().getTime();
