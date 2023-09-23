@@ -6,15 +6,17 @@ export const getPDFCierre = (listado, nroCierre) => {
     const excepcion = resumen.excepcion;
     const recaudacion = resumen.recaudacion;
 
-    const doc = new jsPDF({ unit: "mm" });
+    const doc = new jsPDF({ unit: "mm", format: "letter" });
 
     const hoy = new Date();
-
+    let pagina = 1;
+    const ancho = doc.internal.pageSize.getWidth() / 2;
     doc.setFontSize(7);
     doc.text("Fecha: " + hoy.getDate().toString() + "/" + hoy.getMonth() + 1 + "/" + hoy.getFullYear().toString(), 10, 5);
+    doc.text("Pagina: " + pagina.toString(), doc.internal.pageSize.getWidth() - 30, 5);
     doc.setFontSize(14);
     doc.setFont("Helvetica", "normal", "bold");
-    const ancho = doc.internal.pageSize.getWidth() / 2;
+
     doc.text("Listado de Cierre Nro " + nroCierre, ancho, 15, { align: "center" });
     const fuentes = doc.getFontList();
     doc.setFontSize(8);
@@ -31,6 +33,8 @@ export const getPDFCierre = (listado, nroCierre) => {
     const forma = 3;
     const recauda = 1;
 
+    const pageHeight = doc.internal.pageSize.height;
+
     doc.text("Nro Bono", columna, fila);
     columna += bono + gap;
     doc.text("MOV", columna, fila);
@@ -46,8 +50,37 @@ export const getPDFCierre = (listado, nroCierre) => {
     doc.text("Recauda", columna, fila);
     columna += recauda + gap;
     doc.setFont("Helvetica", "normal", "normal");
+
     items.forEach((item) => {
         fila += 5;
+        if (fila >= pageHeight) {
+            doc.addPage();
+            fila = 30;
+            columna = 25;
+            pagina += 1;
+            doc.setFontSize(7);
+            doc.text("Fecha: " + hoy.getDate().toString() + "/" + hoy.getMonth() + 1 + "/" + hoy.getFullYear().toString(), 10, 5);
+            doc.text("Pagina: " + pagina.toString(), doc.internal.pageSize.getWidth() - 30, 5);
+            doc.setFontSize(8);
+            doc.setFont("Helvetica", "normal", "bold");
+            doc.text("Nro Bono", columna, fila);
+            columna += bono + gap;
+            doc.text("MOV", columna, fila);
+            columna += mov + gap;
+            doc.text("Fecha", columna, fila);
+            columna += fecha + gap;
+            doc.text("DNI", columna, fila);
+            columna += dni + gap;
+            doc.text("Importe", columna, fila);
+            columna += importe + gap;
+            doc.text("FP", columna, fila);
+            columna += forma + gap;
+            doc.text("Recauda", columna, fila);
+            columna += recauda + gap;
+            doc.setFont("Helvetica", "normal", "normal");
+            fila += 5;
+        }
+
         columna = 25;
         const nroBono = item.numero.substring(5, 15);
         const expediente = item.expediente == "" ? item.expediente : "/" + item.expediente;
@@ -69,7 +102,16 @@ export const getPDFCierre = (listado, nroCierre) => {
         columna += recauda + gap;
     });
 
-    fila += 15;
+    doc.addPage();
+    doc.setFontSize(7);
+    doc.text("Fecha: " + hoy.getDate().toString() + "/" + hoy.getMonth() + 1 + "/" + hoy.getFullYear().toString(), 10, 5);
+    doc.text("Pagina: " + pagina.toString(), doc.internal.pageSize.getWidth() - 30, 5);
+    doc.setFontSize(14);
+    doc.setFont("Helvetica", "normal", "bold");
+
+    doc.text("Resumen del Cierre Nro " + nroCierre, ancho, 15, { align: "center" });
+    doc.setFontSize(8);
+    fila = 25;
     doc.setFont("Helvetica", "normal", "bold");
     doc.text("Movimientos Exencion", 5, fila);
     doc.setFont("Helvetica", "normal", "normal");

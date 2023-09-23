@@ -23,6 +23,9 @@ module.exports = merge(common, {
             SERVICE_URL: JSON.stringify("http://localhost/promocionsocial"),
             OM_SERVICE_URL: JSON.stringify("http://localhost:5028"),
             WS_SERVICE_URL: JSON.stringify("wss://wstest.uocra.net"),
+            /*   SERVICE_URL: JSON.stringify("https://www.uocra.net/intranet/promocionsocial/MotivosCategorias"),
+            OM_SERVICE_URL: JSON.stringify("https://MPSOM.uocra.net"),
+            WS_SERVICE_URL: JSON.stringify("wss://ws.uocra.net"), */
         }),
     ],
 });
